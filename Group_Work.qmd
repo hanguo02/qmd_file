@@ -1,0 +1,3744 @@
+---
+bibliography: bio.bib
+csl: harvard-cite-them-right.csl
+title: XSWL's Group Project
+execute:
+  echo: false
+  freeze: true
+format:
+  html:
+    code-copy: true
+    code-link: true
+    toc: true
+    toc-title: On this page
+    toc-depth: 2
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+  pdf:
+    include-in-header:
+      text: |
+        \addtokomafont{disposition}{\rmfamily}
+    mainfont: Spectral
+    sansfont: Roboto Flex
+    monofont: Liberation Mono
+    papersize: a4
+    geometry:
+      - top=25mm
+      - left=40mm
+      - right=30mm
+      - bottom=25mm
+      - heightrounded
+    toc: false
+    number-sections: false
+    colorlinks: true
+    highlight-style: github
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .qmd
+      format_name: quarto
+      format_version: '1.0'
+      jupytext_version: 1.16.4
+  kernelspec:
+    display_name: Python (base)
+    language: python
+    name: base
+---
+
+import os
+import pandas as pd
+
+host = 'https://orca.casa.ucl.ac.uk'
+path = '~jreades/data'
+file = '20240614-London-listings.parquet'
+
+if os.path.exists(file):
+  df = pd.read_parquet(file)
+else: 
+  df = pd.read_parquet(f'{host}/{path}/{file}')
+  df.to_parquet(file)
+
+```{python}
+## 1. Who collected the InsideAirbnb data?
+
+The InsideAirbnb data was collected by Murray Cox, a community activist and technologist. He initiated the project to provide transparency in the Airbnb platform by offering publicly accessible data about listings, hosts, and rental trends.
+```
+
+```{python}
+2. Why did they collect the InsideAirbnb data?
+
+### Purpose of the Collector
+
+Murray Cox aims to empower communities and policymakers with data to better understand the impact of Airbnb on housing availability, affordability, and urban planning. InsideAirbnb operates independently and is not affiliated with Airbnb.
+
+According to Aspinall (2022), COVID-19 emerged in December 2019 in Wuhan, China, after which the world experienced nearly two years of COVID-19 prevention and control. This period lasted until March 2022, when most Western countries lifted their COVID-19 prevention and control measures. 
+
+Therefore, this report treats 2019 as the performance year before COVID-19, 2020-2022 as the performance during COVID-19, and 2022 as the performance after COVID-19. This report uses Python as the programming language to answer questions in JupyterLab.
+```
+
+```{python}
+#| output: asis
+print(f"One of way to embed output in the text looks like this: after cleaning, we were left with {df.shape[0]:,} rows of data.")
+```
+
+
+This way is also supposed to work (`{python} f"{df.shape[0]:,}" `) but I've found it less reliable.
+
+```{python}
+ax = df.host_listings_count.plot.hist(bins=50);
+ax.set_xlim([0,500]);
+```
+
+```{python}
+## 3. How did they collect it?
+
+### 3.1 Data Collection about Inside Airbnb
+
+#### 3.1.1 Definition
+
+Data collection is a systematic process of gathering and measuring information about variables in a defined and systematic way that allows one to answer established research questions, test hypotheses, and evaluate results (Office of Research Integrity, 2003).
+
+The data for **Inside Airbnb** comes from publicly available information on the Airbnb website. According to Inside Airbnb (2015), these data are collected through data analysis, cleansing, and aggregation methods. InsideAirbnb uses open-source technologies such as:
+- **D3, Bootstrap, Python, PostgreSQL, and Google Fonts** for data processing and visualization;
+- **OpenStreetMap data** in Mapbox maps, hosted through **Mapbox**;
+- And served by **Amazon S3 "storage buckets"** (Inside Airbnb, 2015).
+```
+
+```{python}
+## 4. How does the method of collection (Q3) impact the completeness and/or accuracy of the InsideAirbnb data? How well does it represent the process it seeks to study, and what wider issues does this raise?
+
+#### 4.1 Impact of Data Collection Methods on Completeness and Accuracy
+
+This report finds that data analysis, cleansing, and aggregation provide InsideAirbnb with a clear view of the overall characteristics of the **London short-term rental market**, such as:
+- Room types,
+- Landlord behavior, and
+- Short-term rental patterns.
+
+Open-source technologies such as **D3, Bootstrap, Python**, etc., provide intuitive visualizations that make the London short-term rental market simple and easy to understand for users. Hosted technologies like **Amazon S3** offer accurate geographic data, which helps this report study the distribution of the London short-term rental market in specific regions.
+
+#### 4.2 Limitations
+
+Inside Airbnb's data is accessed through the Airbnb platform. **Alsudai (2021)** notes that Inside Airbnb's data collection process may be subject to systematic errors and that its platform may restrict access to the data (e.g., by withholding some information about hosts' identities and renting behaviors), resulting in a potentially incomplete dataset.
+
+While Inside Airbnb's data is usually free and easy to access, it is not possible to create customized marketplaces on the free version. Additionally, it is very expensive to request data archives or find new data, and the process is subject to specific procedures and evaluations (Peña, 2023).
+
+Furthermore, by accessing the **London data**, this report found that the listings covered by the InsideAirbnb data are primarily concentrated in popular areas of London, with limited data from suburban areas. This geographic skew may **underestimate the impact of COVID-19** on the short-term rental market in suburban London.
+```
+
+```{python}
+## 5. What ethical considerations does the use of the InsideAirbnb data raise? 
+
+### 5.1 Data Privacy and Disclosure
+
+Data privacy ensures the protection of personal information against misuse or unauthorized disclosure. **Buckbee (2023)** finds that sharing identifiable information, such as names, addresses, or contact details, without user consent is illegal and poses privacy risks. 
+
+Even anonymized data can lead to re-identification when combined with other datasets, exposing individuals to **discrimination or bias**. Sensitive data, like **income** or **health information**, requires careful handling to mitigate potential misuse (Buckbee, 2023).
+
+Data disclosure must:
+- Balance **public interest** with privacy risks,
+- Adhere to **legal standards**, and
+- Clearly define the purpose and limits of data usage.
+
+Misuse, such as using rental platform data for intrusive marketing, **violates ethical principles**.
+
+This report utilizes data with **consent-based disclosure**, excluding detailed personal information like age. However, risks of **cross-referencing datasets** could lead to tracking, cyberbullying, or harassment. Ensuring the data remains **secure** and used only for its intended purpose is crucial to safeguarding privacy.
+
+### 5.2 Landlord Identity Protection
+
+Revealing landlords’ identities may lead to:
+- **Safety risks**,  
+- **Legal conflicts**, or  
+- **Reputational harm**.  
+
+Following ethical guidelines (**University of Portsmouth, 2024**), this report focuses on **rental trends during COVID-19**, analyzing variables like:
+- Rental fees,  
+- Property types, and  
+- Listing durations.  
+
+Since landlords’ identities are **irrelevant to this analysis**, their information is excluded to ensure confidentiality. 
+
+**Croft (2024)** revealed that all data will be **securely stored**, and appropriate measures will be taken to protect both **digital** and **physical records**. This approach minimizes risks and upholds **ethical standards** in handling sensitive data.
+```
+
+## 6. With reference to the InsideAirbnb data (*i.e.* using numbers, figures, maps, and descriptive statistics), what does an analysis of Hosts and the types of properties that they list suggest about the nature of Airbnb lettings in London?
+
+```{python}
+# Average Price and Host Listings Count Per Year
+```
+
+```{python}
+#reading in data
+import pandas as pd
+data_2019 = pd.read_csv('data2019.csv')
+data_2020 = pd.read_csv('data2020.csv')  
+data_2021 = pd.read_csv('data2021.csv')
+data_2022 = pd.read_csv('data2022.csv')
+data_2023 = pd.read_csv('data2023.csv')  
+data_2024 = pd.read_csv('data2024.csv')  
+
+# Add a 'year' column to each dataset
+data_2019['year'] = 2019
+data_2020['year'] = 2020
+data_2021['year'] = 2021
+data_2022['year'] = 2022
+data_2023['year'] = 2023
+data_2024['year'] = 2024
+
+# Combine the datasets
+combined_data = pd.concat([data_2019, data_2020, data_2021, data_2022, data_2023, data_2024], ignore_index=True)
+
+# Group by year and calculate the averages
+average_per_year = combined_data.groupby('year').agg({
+    'price': 'mean',
+    'host_total_listings_count': 'mean'
+}).reset_index().round(0).astype(int)
+
+# Count the number of unique IDs per year
+id_count_per_year = combined_data.groupby('year')['id'].nunique().reset_index()
+
+# Rename the columns for clarity
+id_count_per_year.columns = ['year', 'number_of_participant']
+
+print(average_per_year)
+print(id_count_per_year)
+```
+
+```{python}
+# Calculate summary statistics for price and host_total_listings_count per year
+# Filter out rows where 'price' or 'host_total_listings_count' are NaN or 0
+summary_data = combined_data[(combined_data['price'] > 0) & (combined_data['host_total_listings_count'] > 0)]
+
+# Compute summary statistics with simpler code
+summary_stats = summary_data.groupby('year').describe()[['price', 'host_total_listings_count']].round(0).astype(int)
+
+summary_stats
+```
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+# Plot a line diagram for the average price and host_total_listings_count per year
+plt.figure(figsize=(6, 4))
+sns.set(style="whitegrid")
+
+# Plot average price
+plt.plot(average_per_year['year'], average_per_year['price'], marker='o',linewidth=2.5, label='Average Price',color='skyblue')
+
+# Plot average host_total_listings_count
+plt.plot(average_per_year['year'], average_per_year['host_total_listings_count'], marker='o',linewidth=2.5,color='orange', label='Average Host Listings Count')
+
+# Add labels and title
+plt.title('Average Price and Host Listings Count Per Year', fontsize=12)
+plt.xlabel('Year', fontsize=10)
+plt.ylabel('Values', fontsize=10)
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.legend(fontsize=8,frameon=False)
+
+plt.show
+```
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the uploaded file to examine its structure and content
+file_path = 'combined_data2.csv'
+data = pd.read_csv(file_path)
+
+# Display the first few rows of the dataframe to understand its structure
+data.head()
+
+# Group the data by 'year' and 'room_type', and count the occurrences
+grouped_data = data.groupby(['year', 'room_type']).size().unstack(fill_value=0)
+
+# Add a column for the ratio of 'Entire home/apt' to 'Private room'
+grouped_data['Ratio'] = grouped_data['Entire home/apt'] / grouped_data['Private room']
+
+# Display the grouped data with the added Ratio column
+grouped_data
+```
+
+```{python}
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Simulated grouped_data for this example
+# grouped_data = <your data here>
+
+# Bar chart settings
+fig, ax1 = plt.subplots(figsize=(10, 7))
+
+# Bar chart parameters
+bar_width = 0.2  # Adjust bar width to fit all room types
+x = np.arange(len(grouped_data.index))  # Positions for the bars
+
+# Plot bars for all room types
+ax1.bar(x - 1.5 * bar_width, grouped_data['Entire home/apt'], bar_width, label='Entire home/apt', color='beige')
+ax1.bar(x - 0.5 * bar_width, grouped_data['Private room'], bar_width, label='Private room', color='salmon')
+ax1.bar(x + 0.5 * bar_width, grouped_data['Hotel room'], bar_width, label='Hotel room', color='lightblue')
+ax1.bar(x + 1.5 * bar_width, grouped_data['Shared room'], bar_width, label='Shared room', color='lightgreen')
+
+# Bar chart axis settings
+ax1.set_ylabel('Number of Listings', fontsize=12)
+ax1.set_xlabel('Year', fontsize=12)
+ax1.set_title('Listings by Room Type and Year with Ratio', fontsize=14)
+ax1.set_xticks(x)
+ax1.set_xticklabels(grouped_data.index)
+ax1.grid(visible=True, linestyle='--', which='major', axis='y', alpha=0.5)
+
+# Line graph for the ratio
+ax2 = ax1.twinx()
+ax2.plot(x, grouped_data['Ratio'], color='orange', marker='o', label='Ratio', linewidth=2)
+ax2.set_ylabel('Ratio (Entire home/apt to Private room)', fontsize=12)
+
+# Annotate the ratio line
+for i, ratio in enumerate(grouped_data['Ratio']):
+    ax2.text(x[i], ratio, f"{ratio:.2f}", color="black", fontsize=10, ha='center', va='bottom')
+
+# Combine legends for both axes
+lines_1, labels_1 = ax1.get_legend_handles_labels()
+lines_2, labels_2 = ax2.get_legend_handles_labels()
+ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='upper left', frameon=False, fontsize=10)
+
+# Layout improvement and display
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+Regardless of other small amount property type, the data analysis employs the **ratio of entire home to private room** to examine rental needs through the pandemic. 
+
+**Figure 2** illustrates a decline from **1.32 in 2019** to **1.23 in 2021**, indicating that rigorous hygiene requirements led to a preference for detached space rentals during the pandemic. 
+
+Data exploration and analysis in **London** applies a **90-day threshold** per calendar year for short-term rentals due to government regulations. **Figure 3** shows host maximum rental nights from **2019 to 2022**, with maximum nights tending to **decrease during pandemics**.
+
+Due to:
+- **National lockdowns**,  
+- **International border closures**, and  
+- **Local government restrictions**,  many landlords switched their properties to **long-term rentals** to secure constant income. 
+
+Short-term rentals were only authorized for **key workers**, quarantined individuals, and other government-approved pandemic objectives as per leasing regulations.
+
+Additionally, at the beginning of the pandemic, the government **temporarily prohibited landlords from evicting tenants**, even if they failed to pay rent. This policy resulted in a **sharper decline in long-term letting** compared to short-term rentals in 2020, as revealed by the graph (Greater London Authority, 2024).
+```
+
+```{python}
+# GIS ANALYSIS FOR 2019
+```
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import geopandas as gpd
+from shapely.geometry import Point#SECOND STEP: Five year casualty totals are linked to isoa spatial data in London，visualization
+
+import os
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+data_2019 = pd.read_csv('2019聚类.csv')
+
+data = pd.concat([data_2019], axis=0)
+input_folder = 'LB_shp'  
+output_folder = 'mergeLSOA'  
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+# Read all.shp files and merge them into one GeoDataFrame
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# Merge all GeoDatafRames
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+fig, ax = plt.subplots(figsize=(10, 10))
+merged_gdf.plot(ax=ax, cmap='viridis', edgecolor='black')
+ax.set_title("Merged Shapefiles from LB_shp Folder")
+plt.show()
+
+output_path = os.path.join(output_folder, 'merged_output.shp')
+merged_gdf.to_file(output_path)
+
+print(f'Merged shapefile has been saved to {output_path}')# View the property sheet
+import geopandas as gpd
+import os
+
+folder_path = 'mergeLSOA'  
+shp_files = [f for f in os.listdir(folder_path) if f.endswith('.shp')]
+for shp_file in shp_files:
+    file_path = os.path.join(folder_path, shp_file)
+    
+    gdf = gpd.read_file(file_path)
+    
+    print(f"attribute table: {shp_file}")
+    print(gdf.head())  
+    print("column name: ", gdf.columns)  
+    print("="*40)
+
+# 创建 GeoDataFrame (将 Airbnb 数据中的经纬度转为几何点)
+from shapely.geometry import Point
+
+# 创建一个点集
+geometry = [Point(xy) for xy in zip(data['longitude'], data['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data, geometry=geometry)
+
+# 确保 CRS (坐标参考系统) 与伦敦的Shapefile一致
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)  # EPSG:4326 是 WGS 84 坐标系
+
+# 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+# 假设你的伦敦区域数据 `merged_gdf` 是已经加载的 GeoDataFrame
+
+# 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+gdf_merged = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="intersects")
+
+# 查看合并后的数据
+print(gdf_merged.head())
+
+print(gdf_airbnb.columns)  # 查看 gdf_airbnb 中的列
+
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from libpysal import weights
+from esda import Moran_Local
+
+# 假设您已经加载了 gdf_airbnb 和 merged_gdf 数据
+# 转换 Airbnb 数据的 CRS
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 合并 Airbnb 数据和伦敦区域数据
+gdf_merged = gpd.sjoin(gdf_airbnb[['year', 'geometry', 'price']], merged_gdf, how="inner", predicate="intersects")
+
+if gdf_merged.shape[0] > 0:
+    gdf_merged_2019 = gdf_merged[gdf_merged['year'] == 2019]
+
+    # 创建空间权重矩阵
+    w = weights.Queen.from_dataframe(gdf_merged_2019, geom_col='geometry', use_index=False)
+    w.transform = 'r'  # 标准化权重矩阵
+
+    # 计算 Local Moran's I
+    moran_local = Moran_Local(gdf_merged_2019['price'], w)
+
+    # 获取 Local Moran's I 值和 p 值
+    gdf_merged_2019['local_moran'] = moran_local.Is
+    gdf_merged_2019['local_p_value'] = moran_local.p_sim
+
+    # 根据 p 值和 q 值标记热点和冷点
+    gdf_merged_2019['cluster'] = 'Non-Significant'
+    gdf_merged_2019.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 1), 'cluster'] = 'High-High (Hotspot)'
+    gdf_merged_2019.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 3), 'cluster'] = 'Low-Low (Coldspot)'
+    gdf_merged_2019.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 2), 'cluster'] = 'High-Low'
+    gdf_merged_2019.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 4), 'cluster'] = 'Low-High'
+
+    # 设置颜色
+    color_map = {
+        'High-High (Hotspot)': 'red',  # 正红色
+        'Low-Low (Coldspot)': 'purple',  # 紫色
+        'High-Low': 'orange',  # 亮橙色
+        'Low-High': 'lightblue',  # 淡蓝色
+        'Non-Significant': 'lightgray'  # 非显著区域为浅灰色
+    }
+
+    # 可视化结果
+    fig, ax = plt.subplots(figsize=(10, 8))
+    gdf_merged_2019.plot(ax=ax, edgecolor='black', color=gdf_merged_2019['cluster'].map(color_map))
+
+    # 添加图例
+    legend_labels = list(color_map.keys())
+    legend_colors = list(color_map.values())
+    handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in legend_colors]
+    ax.legend(handles, legend_labels, title="Cluster Type", loc="best")
+
+    plt.title("Spatial Distribution of Airbnb Listings in London (2019) - Local Moran's I Clusters")
+    plt.show()
+
+    # 输出 Local Moran's I 和 p-value
+    print(gdf_merged_2019[['local_moran', 'local_p_value', 'cluster']].head())
+else:
+    print("合并后的数据为空，请检查数据源。")
+
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+from libpysal import weights
+from esda import Moran_Local
+import os
+
+# 1. 读取 Airbnb 数据（CSV 文件），并转换为 GeoDataFrame
+data_2019 = pd.read_csv('2019聚类.csv')  # 请确保文件路径正确
+
+# 创建几何对象（Point）
+geometry = [Point(xy) for xy in zip(data_2019['longitude'], data_2019['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2019, geometry=geometry)
+
+# 设置 CRS 为 WGS 84 (EPSG:4326)
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)
+
+# 2. 读取伦敦区域的 Shapefile 数据
+input_folder = 'LB_shp'  # 替换为存储 Shapefile 文件的文件夹路径
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+# 读取所有的 .shp 文件并将其合并为一个 GeoDataFrame
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# 合并所有的 GeoDataFrame
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+# 确保 merged_gdf 的 CRS 为 EPSG:27700
+merged_gdf.set_crs('EPSG:27700', allow_override=True, inplace=True)
+
+# 3. 确保 CRS 一致，转换 gdf_airbnb 为 EPSG:27700
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 4. 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+gdf_merged = gpd.sjoin(gdf_airbnb[['year', 'geometry', 'price']], merged_gdf, how="inner", predicate="intersects")
+
+# 检查合并后的数据是否为空
+if gdf_merged.shape[0] > 0:
+    print("合并成功！")
+    gdf_merged_2019 = gdf_merged[gdf_merged['year'] == 2019]
+
+    # 5. 创建空间权重矩阵
+    w = weights.Queen.from_dataframe(gdf_merged_2019, geom_col='geometry', use_index=False)
+    w.transform = 'r'  # 标准化权重矩阵
+
+    # 6. 计算 Local Moran's I
+    moran_local = Moran_Local(gdf_merged_2019['price'], w)
+
+    # 获取 Local Moran's I 值和 p 值
+    gdf_merged_2019['local_moran'] = moran_local.Is
+    gdf_merged_2019['local_p_value'] = moran_local.p_sim
+
+    # 根据 p 值和 q 值标记热点和冷点
+    gdf_merged_2019['cluster'] = 'Non-Significant'
+    gdf_merged_2019.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 1), 'cluster'] = 'High-High (Hotspot)'
+    gdf_merged_2019.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 3), 'cluster'] = 'Low-Low (Coldspot)'
+    gdf_merged_2019.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 2), 'cluster'] = 'High-Low'
+    gdf_merged_2019.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 4), 'cluster'] = 'Low-High'
+
+    # 去除 'Non-Significant' 的数据，只保留显著类别
+    gdf_merged_2019 = gdf_merged_2019[gdf_merged_2019['cluster'] != 'Non-Significant']
+
+    # 7. 设置颜色
+    color_map = {
+        'High-High (Hotspot)': 'red',  # 正红色
+        'Low-Low (Coldspot)': 'purple',  # 紫色
+        'High-Low': 'orange',  # 亮橙色
+        'Low-High': 'lightblue',  # 淡蓝色
+    }
+
+    # 8. 可视化结果
+    fig, ax = plt.subplots(figsize=(10, 8))
+    gdf_merged_2019.plot(ax=ax, edgecolor='black', color=gdf_merged_2019['cluster'].map(color_map))
+
+    # 添加图例
+    legend_labels = list(color_map.keys())
+    legend_colors = list(color_map.values())
+    handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in legend_colors]
+    ax.legend(handles, legend_labels, title="Cluster Type", loc="best")
+
+    plt.title("Spatial Distribution of Airbnb Listings in London (2019) - Local Moran's I Clusters")
+    plt.show()
+
+    # 输出 Local Moran's I 和 p-value
+    print(gdf_merged_2019[['local_moran', 'local_p_value', 'cluster']].head())
+else:
+    print("合并后的数据为空，请检查数据源。")
+
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+
+# 尝试指定编码
+try:
+    data_2019 = pd.read_csv('2019聚类.csv', encoding='latin1')
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2019 = pd.read_csv('2019聚类.csv', encoding='gbk')
+
+# 创建 GeoDataFrame
+geometry = [Point(xy) for xy in zip(data_2019['longitude'], data_2019['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2019, geometry=geometry, crs="EPSG:4326")
+
+# 确保坐标系统一致（EPSG:27700）
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 筛选不同类型房源
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+print("Data loaded successfully.")
+
+import os
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+
+# 1. 读取伦敦区域 Shapefile 并设置坐标系
+input_folder = 'LB_shp'
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+merged_gdf = gpd.GeoDataFrame(pd.concat(
+    [gpd.read_file(os.path.join(input_folder, f)) for f in shp_files], ignore_index=True)
+).to_crs(epsg=27700)
+
+# 2. 读取 2019 年 Airbnb 数据
+data_2019 = pd.read_csv('2019聚类.csv', encoding='latin1')
+geometry = [Point(xy) for xy in zip(data_2019['longitude'], data_2019['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2019, geometry=geometry, crs="EPSG:4326")
+
+# 确保坐标系一致
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 3. 裁剪点数据到伦敦区域内
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")
+
+# 筛选不同类型房源
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+# 4. 绘图
+fig, ax = plt.subplots(figsize=(12, 10))
+
+# 绘制背景底图
+merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.5, linewidth=0.8, label="London Boroughs")
+
+# 绘制房源点：减小点大小，增加透明度
+entire_home.plot(ax=ax, markersize=2, color='red', alpha=0.5, label='Entire home/apt')
+private_room.plot(ax=ax, markersize=2, color='blue', alpha=0.5, label='Private room')
+
+# 图表美化
+plt.title("Spatial Distribution of Airbnb Listings by Room Type in London (2019)")
+plt.legend(markerscale=2)  # 放大图例点大小
+plt.show()
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import numpy as np
+from shapely.geometry import Point
+from scipy.stats import gaussian_kde
+import os
+
+# 1. 读取并合并 LB_shp 区域数据
+input_folder = 'LB_shp'  # Shapefile 文件夹路径
+output_folder = 'mergeLSOA'
+
+# 确保输出文件夹存在
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+# 合并 Shapefile 文件
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+gdf_list = [gpd.read_file(os.path.join(input_folder, shp_file)) for shp_file in shp_files]
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True)).to_crs(epsg=27700)  # 转换 CRS
+
+# 保存合并后的 shapefile
+output_path = os.path.join(output_folder, 'merged_output.shp')
+merged_gdf.to_file(output_path)
+print(f'Merged shapefile has been saved to {output_path}')
+
+# 2. 读取 Airbnb 数据
+data_2019 = pd.read_csv('2019聚类.csv')
+geometry = [Point(xy) for xy in zip(data_2019['longitude'], data_2019['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2019, geometry=geometry, crs="EPSG:4326")
+
+# 转换坐标系为 EPSG:27700，与 LB_shp 区域数据一致
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 筛选房源类型
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+# 3. 定义密度计算和绘图函数
+def calculate_density_with_background(gdf_points, room_type_name, merged_gdf):
+    x = gdf_points.geometry.x
+    y = gdf_points.geometry.y
+    xy = np.vstack([x, y])
+    kde = gaussian_kde(xy)
+
+    # 绘制密度图和行政区背景图
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.set_title(f"Density of {room_type_name} Listings in London (2019)")
+    
+    # 绘制背景地图 (行政区)
+    merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.7, label='Boroughs')
+
+    # 绘制房源核密度
+    sc = ax.scatter(x, y, c=kde(xy), s=10, cmap="Reds", alpha=0.8, label=room_type_name)
+    plt.colorbar(sc, ax=ax, label='Density')
+
+    plt.legend()
+    plt.show()
+
+# 4. 计算密度并绘制与行政区背景结合的核密度图
+calculate_density_with_background(entire_home, "Entire home/apt", merged_gdf)
+calculate_density_with_background(private_room, "Private room", merged_gdf)
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import numpy as np
+from shapely.geometry import Point
+from scipy.stats import gaussian_kde
+import os
+
+# 1. 读取并合并 LB_shp 区域数据
+input_folder = 'LB_shp'  # Shapefile 文件夹路径
+output_folder = 'mergeLSOA'
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+gdf_list = [gpd.read_file(os.path.join(input_folder, shp_file)) for shp_file in shp_files]
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True)).to_crs(epsg=27700)  # 转换 CRS
+
+# 2. 读取 2019 年 Airbnb 数据，处理编码问题并清洗数据
+try:
+    data_2019 = pd.read_csv('2019聚类.csv', encoding='latin1')  # 使用 latin1 尝试读取
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2019 = pd.read_csv('2019聚类.csv', encoding='gbk')
+
+data_2019['longitude'] = pd.to_numeric(data_2019['longitude'], errors='coerce')
+data_2019['latitude'] = pd.to_numeric(data_2019['latitude'], errors='coerce')
+data_2019 = data_2019.dropna(subset=['longitude', 'latitude'])
+
+geometry = [Point(xy) for xy in zip(data_2019['longitude'], data_2019['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2019, geometry=geometry, crs="EPSG:4326")
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")  # 裁剪数据
+
+# 3. 分类房东类型
+host_counts = gdf_airbnb.groupby('host_id').size()
+gdf_airbnb['host_type'] = gdf_airbnb['host_id'].map(lambda x: 'Single Listing' if host_counts[x] == 1 else 'Multiple Listings')
+
+# 4. 筛选单一房源和多房源
+single_listing = gdf_airbnb[gdf_airbnb['host_type'] == 'Single Listing']
+multiple_listings = gdf_airbnb[gdf_airbnb['host_type'] == 'Multiple Listings']
+
+# 5. 定义分布图绘制函数
+def plot_host_distribution(single_listing, multiple_listings, merged_gdf):
+    fig, ax = plt.subplots(figsize=(12, 10))
+    merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.5, linewidth=0.8, label="London Boroughs")
+
+    single_listing.plot(ax=ax, markersize=2, color='green', alpha=0.5, label='Single Listing')
+    multiple_listings.plot(ax=ax, markersize=2, color='purple', alpha=0.5, label='Multiple Listings')
+
+    plt.title("Spatial Distribution of Single vs. Multiple Listings in London (2019)")
+    plt.legend(markerscale=2)  # 放大图例点大小
+    plt.show()
+
+# 6. 绘制分布图
+plot_host_distribution(single_listing, multiple_listings, merged_gdf)
+```
+
+```{python}
+# GIS ANALYSIS FOR 2020
+```
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import geopandas as gpd
+from shapely.geometry import Point
+
+data_2020 = pd.read_csv('2020聚类.csv')
+data = pd.concat([data_2020], axis=0)
+
+#SECOND STEP: Five year casualty totals are linked to isoa spatial data in London，visualization
+
+import os
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+input_folder = 'LB_shp'  
+output_folder = 'mergeLSOA'  
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+# Read all.shp files and merge them into one GeoDataFrame
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# Merge all GeoDatafRames
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+fig, ax = plt.subplots(figsize=(10, 10))
+merged_gdf.plot(ax=ax, cmap='viridis', edgecolor='black')
+ax.set_title("Merged Shapefiles from LB_shp Folder")
+plt.show()
+
+output_path = os.path.join(output_folder, 'merged_output.shp')
+merged_gdf.to_file(output_path)
+
+print(f'Merged shapefile has been saved to {output_path}')
+
+# View the property sheet
+import geopandas as gpd
+import os
+
+folder_path = 'mergeLSOA'  
+shp_files = [f for f in os.listdir(folder_path) if f.endswith('.shp')]
+for shp_file in shp_files:
+    file_path = os.path.join(folder_path, shp_file)
+    
+    gdf = gpd.read_file(file_path)
+    
+    print(f"attribute table: {shp_file}")
+    print(gdf.head())  
+    print("column name: ", gdf.columns)  
+    print("="*40)
+
+# 创建 GeoDataFrame (将 Airbnb 数据中的经纬度转为几何点)
+from shapely.geometry import Point
+
+# 创建一个点集
+geometry = [Point(xy) for xy in zip(data['longitude'], data['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data, geometry=geometry)
+
+# 确保 CRS (坐标参考系统) 与伦敦的Shapefile一致
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)  # EPSG:4326 是 WGS 84 坐标系
+
+# 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+# 假设你的伦敦区域数据 `merged_gdf` 是已经加载的 GeoDataFrame
+
+# 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+gdf_merged = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="intersects")
+
+# 查看合并后的数据
+print(gdf_merged.head())
+
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from libpysal import weights
+from esda import Moran_Local
+
+# 假设您已经加载了 gdf_airbnb 和 merged_gdf 数据
+# 转换 Airbnb 数据的 CRS
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 合并 Airbnb 数据和伦敦区域数据
+gdf_merged = gpd.sjoin(gdf_airbnb[['year', 'geometry', 'price']], merged_gdf, how="inner", predicate="intersects")
+
+if gdf_merged.shape[0] > 0:
+    gdf_merged_2020 = gdf_merged[gdf_merged['year'] == 2020]
+
+    # 创建空间权重矩阵
+    w = weights.Queen.from_dataframe(gdf_merged_2020, geom_col='geometry', use_index=False)
+    w.transform = 'r'  # 标准化权重矩阵
+
+    # 计算 Local Moran's I
+    moran_local = Moran_Local(gdf_merged_2020['price'], w)
+
+    # 获取 Local Moran's I 值和 p 值
+    gdf_merged_2020['local_moran'] = moran_local.Is
+    gdf_merged_2020['local_p_value'] = moran_local.p_sim
+
+    # 根据 p 值和 q 值标记热点和冷点
+    gdf_merged_2020['cluster'] = 'Non-Significant'
+    gdf_merged_2020.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 1), 'cluster'] = 'High-High (Hotspot)'
+    gdf_merged_2020.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 3), 'cluster'] = 'Low-Low (Coldspot)'
+    gdf_merged_2020.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 2), 'cluster'] = 'High-Low'
+    gdf_merged_2020.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 4), 'cluster'] = 'Low-High'
+
+    # 设置颜色
+    color_map = {
+        'High-High (Hotspot)': 'red',  # 正红色
+        'Low-Low (Coldspot)': 'purple',  # 紫色
+        'High-Low': 'orange',  # 亮橙色
+        'Low-High': 'lightblue',  # 淡蓝色
+        'Non-Significant': 'lightgray'  # 非显著区域为浅灰色
+    }
+
+    # 可视化结果
+    fig, ax = plt.subplots(figsize=(10, 8))
+    gdf_merged_2020.plot(ax=ax, edgecolor='black', color=gdf_merged_2020['cluster'].map(color_map))
+
+    # 添加图例
+    legend_labels = list(color_map.keys())
+    legend_colors = list(color_map.values())
+    handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in legend_colors]
+    ax.legend(handles, legend_labels, title="Cluster Type", loc="best")
+
+    plt.title("Spatial Distribution of Airbnb Listings in London (2020) - Local Moran's I Clusters")
+    plt.show()
+
+    # 输出 Local Moran's I 和 p-value
+    print(gdf_merged_2020[['local_moran', 'local_p_value', 'cluster']].head())
+else:
+    print("合并后的数据为空，请检查数据源。")
+
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+from libpysal import weights
+from esda import Moran_Local
+import os
+
+# 1. 读取 Airbnb 数据（CSV 文件），并转换为 GeoDataFrame
+data_2020 = pd.read_csv('2020聚类.csv')  # 请确保文件路径正确
+
+# 创建几何对象（Point）
+geometry = [Point(xy) for xy in zip(data_2020['longitude'], data_2020['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2020, geometry=geometry)
+
+# 设置 CRS 为 WGS 84 (EPSG:4326)
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)
+
+# 2. 读取伦敦区域的 Shapefile 数据
+input_folder = 'LB_shp'  # 替换为存储 Shapefile 文件的文件夹路径
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+# 读取所有的 .shp 文件并将其合并为一个 GeoDataFrame
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# 合并所有的 GeoDataFrame
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+# 确保 merged_gdf 的 CRS 为 EPSG:27700
+merged_gdf.set_crs('EPSG:27700', allow_override=True, inplace=True)
+
+# 3. 确保 CRS 一致，转换 gdf_airbnb 为 EPSG:27700
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 4. 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+gdf_merged = gpd.sjoin(gdf_airbnb[['year', 'geometry', 'price']], merged_gdf, how="inner", predicate="intersects")
+
+# 检查合并后的数据是否为空
+if gdf_merged.shape[0] > 0:
+    print("合并成功！")
+    gdf_merged_2020 = gdf_merged[gdf_merged['year'] == 2020]
+
+    # 5. 创建空间权重矩阵
+    w = weights.Queen.from_dataframe(gdf_merged_2020, geom_col='geometry', use_index=False)
+    w.transform = 'r'  # 标准化权重矩阵
+
+    # 6. 计算 Local Moran's I
+    moran_local = Moran_Local(gdf_merged_2020['price'], w)
+
+    # 获取 Local Moran's I 值和 p 值
+    gdf_merged_2020['local_moran'] = moran_local.Is
+    gdf_merged_2020['local_p_value'] = moran_local.p_sim
+
+    # 根据 p 值和 q 值标记热点和冷点
+    gdf_merged_2020['cluster'] = 'Non-Significant'
+    gdf_merged_2020.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 1), 'cluster'] = 'High-High (Hotspot)'
+    gdf_merged_2020.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 3), 'cluster'] = 'Low-Low (Coldspot)'
+    gdf_merged_2020.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 2), 'cluster'] = 'High-Low'
+    gdf_merged_2020.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 4), 'cluster'] = 'Low-High'
+
+    # 去除 'Non-Significant' 的数据，只保留显著类别
+    gdf_merged_2020 = gdf_merged_2020[gdf_merged_2020['cluster'] != 'Non-Significant']
+
+    # 7. 设置颜色
+    color_map = {
+        'High-High (Hotspot)': 'red',  # 正红色
+        'Low-Low (Coldspot)': 'purple',  # 紫色
+        'High-Low': 'orange',  # 亮橙色
+        'Low-High': 'lightblue',  # 淡蓝色
+    }
+
+    # 8. 可视化结果
+    fig, ax = plt.subplots(figsize=(10, 8))
+    gdf_merged_2020.plot(ax=ax, edgecolor='black', color=gdf_merged_2020['cluster'].map(color_map))
+
+    # 添加图例
+    legend_labels = list(color_map.keys())
+    legend_colors = list(color_map.values())
+    handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in legend_colors]
+    ax.legend(handles, legend_labels, title="Cluster Type", loc="best")
+
+    plt.title("Spatial Distribution of Airbnb Listings in London (2020) - Local Moran's I Clusters")
+    plt.show()
+
+    # 输出 Local Moran's I 和 p-value
+    print(gdf_merged_2020[['local_moran', 'local_p_value', 'cluster']].head())
+else:
+    print("合并后的数据为空，请检查数据源。")
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+
+# 尝试指定编码
+try:
+    data_2020 = pd.read_csv('2020聚类.csv', encoding='latin1')
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2020 = pd.read_csv('2020聚类.csv', encoding='gbk')
+
+# 创建 GeoDataFrame
+geometry = [Point(xy) for xy in zip(data_2020['longitude'], data_2020['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2020, geometry=geometry, crs="EPSG:4326")
+
+# 确保坐标系统一致（EPSG:27700）
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 筛选不同类型房源
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+print("Data loaded successfully.")
+
+import os
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+
+# 1. 读取伦敦区域 Shapefile 并设置坐标系
+input_folder = 'LB_shp'
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+merged_gdf = gpd.GeoDataFrame(pd.concat(
+    [gpd.read_file(os.path.join(input_folder, f)) for f in shp_files], ignore_index=True)
+).to_crs(epsg=27700)
+
+# 2. 读取 2020 年 Airbnb 数据
+data_2020 = pd.read_csv('2020聚类.csv', encoding='latin1')
+geometry = [Point(xy) for xy in zip(data_2020['longitude'], data_2020['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2020, geometry=geometry, crs="EPSG:4326")
+
+# 确保坐标系一致
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 3. 裁剪点数据到伦敦区域内
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")
+
+# 筛选不同类型房源
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+# 4. 绘图
+fig, ax = plt.subplots(figsize=(12, 10))
+
+# 绘制背景底图
+merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.5, linewidth=0.8, label="London Boroughs")
+
+# 绘制房源点：减小点大小，增加透明度
+entire_home.plot(ax=ax, markersize=2, color='red', alpha=0.5, label='Entire home/apt')
+private_room.plot(ax=ax, markersize=2, color='blue', alpha=0.5, label='Private room')
+
+# 图表美化
+plt.title("Spatial Distribution of Airbnb Listings by Room Type in London (2020)")
+plt.legend(markerscale=2)  # 放大图例点大小
+plt.show()
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import numpy as np
+from shapely.geometry import Point
+from scipy.stats import gaussian_kde
+import os
+
+# 1. 读取并合并 LB_shp 区域数据
+input_folder = 'LB_shp'  # Shapefile 文件夹路径
+output_folder = 'mergeLSOA'
+
+# 确保输出文件夹存在
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+# 合并 Shapefile 文件
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+gdf_list = [gpd.read_file(os.path.join(input_folder, shp_file)) for shp_file in shp_files]
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True)).to_crs(epsg=27700)  # 转换 CRS
+
+# 保存合并后的 shapefile
+output_path = os.path.join(output_folder, 'merged_output.shp')
+merged_gdf.to_file(output_path)
+print(f'Merged shapefile has been saved to {output_path}')
+
+# 2. 读取 Airbnb 数据
+data_2020 = pd.read_csv('2020聚类.csv')
+geometry = [Point(xy) for xy in zip(data_2020['longitude'], data_2020['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2020, geometry=geometry, crs="EPSG:4326")
+
+# 转换坐标系为 EPSG:27700，与 LB_shp 区域数据一致
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 筛选房源类型
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+# 3. 定义密度计算和绘图函数
+def calculate_density_with_background(gdf_points, room_type_name, merged_gdf):
+    x = gdf_points.geometry.x
+    y = gdf_points.geometry.y
+    xy = np.vstack([x, y])
+    kde = gaussian_kde(xy)
+
+    # 绘制密度图和行政区背景图
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.set_title(f"Density of {room_type_name} Listings in London (2020)")
+    
+    # 绘制背景地图 (行政区)
+    merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.7, label='Boroughs')
+
+    # 绘制房源核密度
+    sc = ax.scatter(x, y, c=kde(xy), s=10, cmap="Reds", alpha=0.8, label=room_type_name)
+    plt.colorbar(sc, ax=ax, label='Density')
+
+    plt.legend()
+    plt.show()
+
+# 4. 计算密度并绘制与行政区背景结合的核密度图
+calculate_density_with_background(entire_home, "Entire home/apt", merged_gdf)
+calculate_density_with_background(private_room, "Private room", merged_gdf)
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import numpy as np
+from shapely.geometry import Point
+from scipy.stats import gaussian_kde
+import os
+
+# 1. 读取并合并 LB_shp 区域数据
+input_folder = 'LB_shp'  # Shapefile 文件夹路径
+output_folder = 'mergeLSOA'
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+gdf_list = [gpd.read_file(os.path.join(input_folder, shp_file)) for shp_file in shp_files]
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True)).to_crs(epsg=27700)  # 转换 CRS
+
+# 2. 读取 2020 年 Airbnb 数据，处理编码问题并清洗数据
+try:
+    data_2020 = pd.read_csv('2020聚类.csv', encoding='latin1')  # 使用 latin1 尝试读取
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2020 = pd.read_csv('2020聚类.csv', encoding='gbk')
+
+data_2020['longitude'] = pd.to_numeric(data_2020['longitude'], errors='coerce')
+data_2020['latitude'] = pd.to_numeric(data_2020['latitude'], errors='coerce')
+data_2020 = data_2020.dropna(subset=['longitude', 'latitude'])
+
+geometry = [Point(xy) for xy in zip(data_2020['longitude'], data_2020['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2020, geometry=geometry, crs="EPSG:4326")
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")  # 裁剪数据
+
+# 3. 分类房东类型
+host_counts = gdf_airbnb.groupby('host_id').size()
+gdf_airbnb['host_type'] = gdf_airbnb['host_id'].map(lambda x: 'Single Listing' if host_counts[x] == 1 else 'Multiple Listings')
+
+# 4. 筛选单一房源和多房源
+single_listing = gdf_airbnb[gdf_airbnb['host_type'] == 'Single Listing']
+multiple_listings = gdf_airbnb[gdf_airbnb['host_type'] == 'Multiple Listings']
+
+# 5. 定义分布图绘制函数
+def plot_host_distribution(single_listing, multiple_listings, merged_gdf):
+    fig, ax = plt.subplots(figsize=(12, 10))
+    merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.5, linewidth=0.8, label="London Boroughs")
+
+    single_listing.plot(ax=ax, markersize=2, color='green', alpha=0.5, label='Single Listing')
+    multiple_listings.plot(ax=ax, markersize=2, color='purple', alpha=0.5, label='Multiple Listings')
+
+    plt.title("Spatial Distribution of Single vs. Multiple Listings in London (2020)")
+    plt.legend(markerscale=2)  # 放大图例点大小
+    plt.show()
+
+# 6. 绘制分布图
+plot_host_distribution(single_listing, multiple_listings, merged_gdf)
+```
+
+```{python}
+# GIS ANALYSIS FOR 2021
+```
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import geopandas as gpd
+from shapely.geometry import Point
+
+data_2021 = pd.read_csv('2021聚类.csv')
+data = pd.concat([data_2021], axis=0)
+
+#SECOND STEP: Five year casualty totals are linked to isoa spatial data in London，visualization
+
+import os
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+input_folder = 'LB_shp'  
+output_folder = 'mergeLSOA'  
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+# Read all.shp files and merge them into one GeoDataFrame
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# Merge all GeoDatafRames
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+fig, ax = plt.subplots(figsize=(10, 10))
+merged_gdf.plot(ax=ax, cmap='viridis', edgecolor='black')
+ax.set_title("Merged Shapefiles from LB_shp Folder")
+plt.show()
+
+output_path = os.path.join(output_folder, 'merged_output.shp')
+merged_gdf.to_file(output_path)
+
+print(f'Merged shapefile has been saved to {output_path}')
+
+# View the property sheet
+import geopandas as gpd
+import os
+
+folder_path = 'mergeLSOA'  
+shp_files = [f for f in os.listdir(folder_path) if f.endswith('.shp')]
+for shp_file in shp_files:
+    file_path = os.path.join(folder_path, shp_file)
+    
+    gdf = gpd.read_file(file_path)
+    
+    print(f"attribute table: {shp_file}")
+    print(gdf.head())  
+    print("column name: ", gdf.columns)  
+    print("="*40)
+
+# 创建 GeoDataFrame (将 Airbnb 数据中的经纬度转为几何点)
+from shapely.geometry import Point
+
+# 创建一个点集
+geometry = [Point(xy) for xy in zip(data['longitude'], data['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data, geometry=geometry)
+
+# 确保 CRS (坐标参考系统) 与伦敦的Shapefile一致
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)  # EPSG:4326 是 WGS 84 坐标系
+
+# 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+# 假设你的伦敦区域数据 `merged_gdf` 是已经加载的 GeoDataFrame
+
+# 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+gdf_merged = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="intersects")
+
+# 查看合并后的数据
+print(gdf_merged.head())
+
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+
+# 读取 CSV 文件
+data_2021 = pd.read_csv('2021聚类.csv')  # 请确保文件路径正确
+
+# 创建 GeoDataFrame （将 Airbnb 数据中的经纬度转为几何点）
+geometry = [Point(xy) for xy in zip(data_2021['longitude'], data_2021['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2021, geometry=geometry)
+
+# 确保 CRS 设置为 WGS 84（EPSG:4326），通常经纬度数据会使用此 CRS
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)
+
+# 检查 GeoDataFrame 是否正确创建
+print(gdf_airbnb.head())
+
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+from libpysal import weights
+from esda import Moran_Local
+import os
+
+# 1. 读取 Airbnb 数据（CSV 文件），并转换为 GeoDataFrame
+data_2021 = pd.read_csv('2021聚类.csv')  # 请确保文件路径正确
+
+# 创建几何对象（Point）
+geometry = [Point(xy) for xy in zip(data_2021['longitude'], data_2021['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2021, geometry=geometry)
+
+# 设置 CRS 为 WGS 84 (EPSG:4326)
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)
+
+# 2. 读取伦敦区域的 Shapefile 数据
+input_folder = 'LB_shp'  # 替换为存储 Shapefile 文件的文件夹路径
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+# 读取所有的 .shp 文件并将其合并为一个 GeoDataFrame
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# 合并所有的 GeoDataFrame
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+# 确保 merged_gdf 的 CRS 为 EPSG:27700
+merged_gdf.set_crs('EPSG:27700', allow_override=True, inplace=True)
+
+# 3. 确保 CRS 一致，转换 gdf_airbnb 为 EPSG:27700
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 4. 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+gdf_merged = gpd.sjoin(gdf_airbnb[['year', 'geometry', 'price']], merged_gdf, how="inner", predicate="intersects")
+
+# 检查合并后的数据是否为空
+if gdf_merged.shape[0] > 0:
+    print("合并成功！")
+    gdf_merged_2021 = gdf_merged[gdf_merged['year'] == 2021]
+
+    # 5. 创建空间权重矩阵
+    w = weights.Queen.from_dataframe(gdf_merged_2021, geom_col='geometry', use_index=False)
+    w.transform = 'r'  # 标准化权重矩阵
+
+    # 6. 计算 Local Moran's I
+    moran_local = Moran_Local(gdf_merged_2021['price'], w)
+
+    # 获取 Local Moran's I 值和 p 值
+    gdf_merged_2021['local_moran'] = moran_local.Is
+    gdf_merged_2021['local_p_value'] = moran_local.p_sim
+
+    # 根据 p 值和 q 值标记热点和冷点
+    gdf_merged_2021['cluster'] = 'Non-Significant'
+    gdf_merged_2021.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 1), 'cluster'] = 'High-High (Hotspot)'
+    gdf_merged_2021.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 3), 'cluster'] = 'Low-Low (Coldspot)'
+    gdf_merged_2021.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 2), 'cluster'] = 'High-Low'
+    gdf_merged_2021.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 4), 'cluster'] = 'Low-High'
+
+    # 7. 设置颜色
+    color_map = {
+        'High-High (Hotspot)': 'red',  # 正红色
+        'Low-Low (Coldspot)': 'purple',  # 紫色
+        'High-Low': 'orange',  # 亮橙色
+        'Low-High': 'lightblue',  # 淡蓝色
+        'Non-Significant': 'lightgray'  # 非显著区域为浅灰色
+    }
+
+    # 8. 可视化结果
+    fig, ax = plt.subplots(figsize=(10, 8))
+    gdf_merged_2021.plot(ax=ax, edgecolor='black', color=gdf_merged_2021['cluster'].map(color_map))
+
+    # 添加图例
+    legend_labels = list(color_map.keys())
+    legend_colors = list(color_map.values())
+    handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in legend_colors]
+    ax.legend(handles, legend_labels, title="Cluster Type", loc="best")
+
+    plt.title("Spatial Distribution of Airbnb Listings in London (2021) - Local Moran's I Clusters")
+    plt.show()
+
+    # 输出 Local Moran's I 和 p-value
+    print(gdf_merged_2021[['local_moran', 'local_p_value', 'cluster']].head())
+else:
+    print("合并后的数据为空，请检查数据源。")
+
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+from libpysal import weights
+from esda import Moran_Local
+import os
+
+# 1. 读取 Airbnb 数据（CSV 文件），并转换为 GeoDataFrame
+data_2021 = pd.read_csv('2021聚类.csv')  # 请确保文件路径正确
+
+# 创建几何对象（Point）
+geometry = [Point(xy) for xy in zip(data_2021['longitude'], data_2021['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2021, geometry=geometry)
+
+# 设置 CRS 为 WGS 84 (EPSG:4326)
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)
+
+# 2. 读取伦敦区域的 Shapefile 数据
+input_folder = 'LB_shp'  # 替换为存储 Shapefile 文件的文件夹路径
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+# 读取所有的 .shp 文件并将其合并为一个 GeoDataFrame
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# 合并所有的 GeoDataFrame
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+# 确保 merged_gdf 的 CRS 为 EPSG:27700
+merged_gdf.set_crs('EPSG:27700', allow_override=True, inplace=True)
+
+# 3. 确保 CRS 一致，转换 gdf_airbnb 为 EPSG:27700
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 4. 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+gdf_merged = gpd.sjoin(gdf_airbnb[['year', 'geometry', 'price']], merged_gdf, how="inner", predicate="intersects")
+
+# 检查合并后的数据是否为空
+if gdf_merged.shape[0] > 0:
+    print("合并成功！")
+    gdf_merged_2021 = gdf_merged[gdf_merged['year'] == 2021]
+
+    # 5. 创建空间权重矩阵
+    w = weights.Queen.from_dataframe(gdf_merged_2021, geom_col='geometry', use_index=False)
+    w.transform = 'r'  # 标准化权重矩阵
+
+    # 6. 计算 Local Moran's I
+    moran_local = Moran_Local(gdf_merged_2021['price'], w)
+
+    # 获取 Local Moran's I 值和 p 值
+    gdf_merged_2021['local_moran'] = moran_local.Is
+    gdf_merged_2021['local_p_value'] = moran_local.p_sim
+
+    # 根据 p 值和 q 值标记热点和冷点
+    gdf_merged_2021['cluster'] = 'Non-Significant'
+    gdf_merged_2021.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 1), 'cluster'] = 'High-High (Hotspot)'
+    gdf_merged_2021.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 3), 'cluster'] = 'Low-Low (Coldspot)'
+    gdf_merged_2021.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 2), 'cluster'] = 'High-Low'
+    gdf_merged_2021.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 4), 'cluster'] = 'Low-High'
+
+    # 去除 'Non-Significant' 的数据，只保留显著类别
+    gdf_merged_2021 = gdf_merged_2021[gdf_merged_2021['cluster'] != 'Non-Significant']
+
+    # 7. 设置颜色
+    color_map = {
+        'High-High (Hotspot)': 'red',  # 正红色
+        'Low-Low (Coldspot)': 'purple',  # 紫色
+        'High-Low': 'orange',  # 亮橙色
+        'Low-High': 'lightblue',  # 淡蓝色
+    }
+
+    # 8. 可视化结果
+    fig, ax = plt.subplots(figsize=(10, 8))
+    gdf_merged_2021.plot(ax=ax, edgecolor='black', color=gdf_merged_2021['cluster'].map(color_map))
+
+    # 添加图例
+    legend_labels = list(color_map.keys())
+    legend_colors = list(color_map.values())
+    handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in legend_colors]
+    ax.legend(handles, legend_labels, title="Cluster Type", loc="best")
+
+    plt.title("Spatial Distribution of Airbnb Listings in London (2021) - Local Moran's I Clusters")
+    plt.show()
+
+    # 输出 Local Moran's I 和 p-value
+    print(gdf_merged_2021[['local_moran', 'local_p_value', 'cluster']].head())
+else:
+    print("合并后的数据为空，请检查数据源。")
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+
+# 尝试指定编码
+try:
+    data_2021 = pd.read_csv('2021聚类.csv', encoding='latin1')
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2021 = pd.read_csv('2021聚类.csv', encoding='gbk')
+
+# 创建 GeoDataFrame
+geometry = [Point(xy) for xy in zip(data_2021['longitude'], data_2021['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2021, geometry=geometry, crs="EPSG:4326")
+
+# 确保坐标系统一致（EPSG:27700）
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 筛选不同类型房源
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+print("Data loaded successfully.")
+import os
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+
+# 1. 读取伦敦区域 Shapefile 并设置坐标系
+input_folder = 'LB_shp'
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+merged_gdf = gpd.GeoDataFrame(pd.concat(
+    [gpd.read_file(os.path.join(input_folder, f)) for f in shp_files], ignore_index=True)
+).to_crs(epsg=27700)
+
+# 2. 读取 2021 年 Airbnb 数据
+data_2021 = pd.read_csv('2021聚类.csv', encoding='latin1')
+geometry = [Point(xy) for xy in zip(data_2021['longitude'], data_2021['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2021, geometry=geometry, crs="EPSG:4326")
+
+# 确保坐标系一致
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 3. 裁剪点数据到伦敦区域内
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")
+
+# 筛选不同类型房源
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+# 4. 绘图
+fig, ax = plt.subplots(figsize=(12, 10))
+
+# 绘制背景底图
+merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.5, linewidth=0.8, label="London Boroughs")
+
+# 绘制房源点：减小点大小，增加透明度
+entire_home.plot(ax=ax, markersize=2, color='red', alpha=0.5, label='Entire home/apt')
+private_room.plot(ax=ax, markersize=2, color='blue', alpha=0.5, label='Private room')
+
+# 图表美化
+plt.title("Spatial Distribution of Airbnb Listings by Room Type in London (2021)")
+plt.legend(markerscale=2)  # 放大图例点大小
+plt.show()
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import numpy as np
+from shapely.geometry import Point
+from scipy.stats import gaussian_kde
+import os
+
+# 1. 读取并合并 LB_shp 区域数据
+input_folder = 'LB_shp'  # Shapefile 文件夹路径
+output_folder = 'mergeLSOA'
+
+# 确保输出文件夹存在
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+# 合并 Shapefile 文件
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+gdf_list = [gpd.read_file(os.path.join(input_folder, shp_file)) for shp_file in shp_files]
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True)).to_crs(epsg=27700)  # 转换 CRS
+
+# 保存合并后的 shapefile
+output_path = os.path.join(output_folder, 'merged_output.shp')
+merged_gdf.to_file(output_path)
+print(f'Merged shapefile has been saved to {output_path}')
+
+# 2. 读取 Airbnb 数据
+data_2021 = pd.read_csv('2021聚类.csv')  # 修改年份为 2021
+geometry = [Point(xy) for xy in zip(data_2021['longitude'], data_2021['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2021, geometry=geometry, crs="EPSG:4326")
+
+# 转换坐标系为 EPSG:27700，与 LB_shp 区域数据一致
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 筛选房源类型
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+# 3. 定义密度计算和绘图函数
+def calculate_density_with_background(gdf_points, room_type_name, merged_gdf):
+    x = gdf_points.geometry.x
+    y = gdf_points.geometry.y
+    xy = np.vstack([x, y])
+    kde = gaussian_kde(xy)
+
+    # 绘制密度图和行政区背景图
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.set_title(f"Density of {room_type_name} Listings in London (2021)")  # 修改年份为 2021
+    
+    # 绘制背景地图 (行政区)
+    merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.7, label='Boroughs')
+
+    # 绘制房源核密度
+    sc = ax.scatter(x, y, c=kde(xy), s=10, cmap="Reds", alpha=0.8, label=room_type_name)
+    plt.colorbar(sc, ax=ax, label='Density')
+
+    plt.legend()
+    plt.show()
+
+# 4. 计算密度并绘制与行政区背景结合的核密度图
+calculate_density_with_background(entire_home, "Entire home/apt", merged_gdf)
+calculate_density_with_background(private_room, "Private room", merged_gdf)
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import numpy as np
+from shapely.geometry import Point
+from scipy.stats import gaussian_kde
+import os
+
+# 1. 读取并合并 LB_shp 区域数据
+input_folder = 'LB_shp'  # Shapefile 文件夹路径
+output_folder = 'mergeLSOA'
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+gdf_list = [gpd.read_file(os.path.join(input_folder, shp_file)) for shp_file in shp_files]
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True)).to_crs(epsg=27700)  # 转换 CRS
+
+# 2. 读取 2021 年 Airbnb 数据，处理编码问题并清洗数据
+try:
+    data_2021 = pd.read_csv('2021聚类.csv', encoding='latin1')  # 使用 latin1 尝试读取
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2021 = pd.read_csv('2021聚类.csv', encoding='gbk')
+
+data_2021['longitude'] = pd.to_numeric(data_2021['longitude'], errors='coerce')
+data_2021['latitude'] = pd.to_numeric(data_2021['latitude'], errors='coerce')
+data_2021 = data_2021.dropna(subset=['longitude', 'latitude'])
+
+geometry = [Point(xy) for xy in zip(data_2021['longitude'], data_2021['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2021, geometry=geometry, crs="EPSG:4326")
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")  # 裁剪数据
+
+# 3. 分类房东类型
+host_counts = gdf_airbnb.groupby('host_id').size()
+gdf_airbnb['host_type'] = gdf_airbnb['host_id'].map(lambda x: 'Single Listing' if host_counts[x] == 1 else 'Multiple Listings')
+
+# 4. 筛选单一房源和多房源
+single_listing = gdf_airbnb[gdf_airbnb['host_type'] == 'Single Listing']
+multiple_listings = gdf_airbnb[gdf_airbnb['host_type'] == 'Multiple Listings']
+
+# 5. 定义分布图绘制函数
+def plot_host_distribution(single_listing, multiple_listings, merged_gdf):
+    fig, ax = plt.subplots(figsize=(12, 10))
+    merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.5, linewidth=0.8, label="London Boroughs")
+
+    single_listing.plot(ax=ax, markersize=2, color='green', alpha=0.5, label='Single Listing')
+    multiple_listings.plot(ax=ax, markersize=2, color='purple', alpha=0.5, label='Multiple Listings')
+
+    plt.title("Spatial Distribution of Single vs. Multiple Listings in London (2021)")
+    plt.legend(markerscale=2)  # 放大图例点大小
+    plt.show()
+
+# 6. 绘制分布图
+plot_host_distribution(single_listing, multiple_listings, merged_gdf)
+```
+
+```{python}
+## DIS ANALYSIS FOR 2022
+```
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import geopandas as gpd
+from shapely.geometry import Point
+
+data_2022 = pd.read_csv('2022聚类.csv', encoding='ISO-8859-1')  # 或尝试 'latin1'
+data = pd.concat([data_2022], axis=0)
+
+#SECOND STEP: Five year casualty totals are linked to isoa spatial data in London，visualization
+
+import os
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+input_folder = 'LB_shp'  
+output_folder = 'mergeLSOA'  
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+# Read all.shp files and merge them into one GeoDataFrame
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# Merge all GeoDatafRames
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+fig, ax = plt.subplots(figsize=(10, 10))
+merged_gdf.plot(ax=ax, cmap='viridis', edgecolor='black')
+ax.set_title("Merged Shapefiles from LB_shp Folder")
+plt.show()
+
+output_path = os.path.join(output_folder, 'merged_output.shp')
+merged_gdf.to_file(output_path)
+
+print(f'Merged shapefile has been saved to {output_path}')
+
+# View the property sheet
+import geopandas as gpd
+import os
+
+folder_path = 'mergeLSOA'  
+shp_files = [f for f in os.listdir(folder_path) if f.endswith('.shp')]
+for shp_file in shp_files:
+    file_path = os.path.join(folder_path, shp_file)
+    
+    gdf = gpd.read_file(file_path)
+    
+    print(f"attribute table: {shp_file}")
+    print(gdf.head())  
+    print("column name: ", gdf.columns)  
+    print("="*40)
+
+# 创建 GeoDataFrame (将 Airbnb 数据中的经纬度转为几何点)
+from shapely.geometry import Point
+
+# 创建一个点集
+geometry = [Point(xy) for xy in zip(data['longitude'], data['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data, geometry=geometry)
+
+# 确保 CRS (坐标参考系统) 与伦敦的Shapefile一致
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)  # EPSG:4326 是 WGS 84 坐标系
+
+# 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+# 假设你的伦敦区域数据 `merged_gdf` 是已经加载的 GeoDataFrame
+
+# 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+gdf_merged = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="intersects")
+
+# 查看合并后的数据
+print(gdf_merged.head())
+
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from libpysal import weights
+from esda import Moran_Local
+
+# 假设您已经加载了 gdf_airbnb 和 merged_gdf 数据
+# 转换 Airbnb 数据的 CRS
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 合并 Airbnb 数据和伦敦区域数据
+gdf_merged = gpd.sjoin(gdf_airbnb[['year', 'geometry', 'price']], merged_gdf, how="inner", predicate="intersects")
+
+if gdf_merged.shape[0] > 0:
+    gdf_merged_2022 = gdf_merged[gdf_merged['year'] == 2022]
+
+    # 创建空间权重矩阵
+    w = weights.Queen.from_dataframe(gdf_merged_2022, geom_col='geometry', use_index=False)
+    w.transform = 'r'  # 标准化权重矩阵
+
+    # 计算 Local Moran's I
+    moran_local = Moran_Local(gdf_merged_2022['price'], w)
+
+    # 获取 Local Moran's I 值和 p 值
+    gdf_merged_2022['local_moran'] = moran_local.Is
+    gdf_merged_2022['local_p_value'] = moran_local.p_sim
+
+    # 根据 p 值和 q 值标记热点和冷点
+    gdf_merged_2022['cluster'] = 'Non-Significant'
+    gdf_merged_2022.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 1), 'cluster'] = 'High-High (Hotspot)'
+    gdf_merged_2022.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 3), 'cluster'] = 'Low-Low (Coldspot)'
+    gdf_merged_2022.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 2), 'cluster'] = 'High-Low'
+    gdf_merged_2022.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 4), 'cluster'] = 'Low-High'
+
+    # 设置颜色
+    color_map = {
+        'High-High (Hotspot)': 'red',  # 正红色
+        'Low-Low (Coldspot)': 'purple',  # 紫色
+        'High-Low': 'orange',  # 亮橙色
+        'Low-High': 'lightblue',  # 淡蓝色
+        'Non-Significant': 'lightgray'  # 非显著区域为浅灰色
+    }
+
+    # 可视化结果
+    fig, ax = plt.subplots(figsize=(10, 8))
+    gdf_merged_2022.plot(ax=ax, edgecolor='black', color=gdf_merged_2022['cluster'].map(color_map))
+
+    # 添加图例
+    legend_labels = list(color_map.keys())
+    legend_colors = list(color_map.values())
+    handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in legend_colors]
+    ax.legend(handles, legend_labels, title="Cluster Type", loc="best")
+
+    plt.title("Spatial Distribution of Airbnb Listings in London (2022) - Local Moran's I Clusters")
+    plt.show()
+
+    # 输出 Local Moran's I 和 p-value
+    print(gdf_merged_2022[['local_moran', 'local_p_value', 'cluster']].head())
+else:
+    print("合并后的数据为空，请检查数据源。")
+
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+from libpysal import weights
+from esda import Moran_Local
+import os
+
+# 1. 读取 Airbnb 数据（CSV 文件），并转换为 GeoDataFrame
+data_2022 = pd.read_csv('2022聚类.csv', encoding='ISO-8859-1') # 请确保文件路径正确
+
+# 创建几何对象（Point）
+geometry = [Point(xy) for xy in zip(data_2022['longitude'], data_2022['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2022, geometry=geometry)
+
+# 设置 CRS 为 WGS 84 (EPSG:4326)
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)
+
+# 2. 读取伦敦区域的 Shapefile 数据
+input_folder = 'LB_shp'  # 替换为存储 Shapefile 文件的文件夹路径
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+# 读取所有的 .shp 文件并将其合并为一个 GeoDataFrame
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# 合并所有的 GeoDataFrame
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+# 确保 merged_gdf 的 CRS 为 EPSG:27700
+merged_gdf.set_crs('EPSG:27700', allow_override=True, inplace=True)
+
+# 3. 确保 CRS 一致，转换 gdf_airbnb 为 EPSG:27700
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 4. 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+gdf_merged = gpd.sjoin(gdf_airbnb[['year', 'geometry', 'price']], merged_gdf, how="inner", predicate="intersects")
+
+# 检查合并后的数据是否为空
+if gdf_merged.shape[0] > 0:
+    print("合并成功！")
+    gdf_merged_2022 = gdf_merged[gdf_merged['year'] == 2022]
+
+    # 5. 创建空间权重矩阵
+    w = weights.Queen.from_dataframe(gdf_merged_2022, geom_col='geometry', use_index=False)
+    w.transform = 'r'  # 标准化权重矩阵
+
+    # 6. 计算 Local Moran's I
+    moran_local = Moran_Local(gdf_merged_2022['price'], w)
+
+    # 获取 Local Moran's I 值和 p 值
+    gdf_merged_2022['local_moran'] = moran_local.Is
+    gdf_merged_2022['local_p_value'] = moran_local.p_sim
+
+    # 根据 p 值和 q 值标记热点和冷点
+    gdf_merged_2022['cluster'] = 'Non-Significant'
+    gdf_merged_2022.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 1), 'cluster'] = 'High-High (Hotspot)'
+    gdf_merged_2022.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 3), 'cluster'] = 'Low-Low (Coldspot)'
+    gdf_merged_2022.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 2), 'cluster'] = 'High-Low'
+    gdf_merged_2022.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 4), 'cluster'] = 'Low-High'
+
+    # 去除 'Non-Significant' 的数据，只保留显著类别
+    gdf_merged_2022 = gdf_merged_2022[gdf_merged_2022['cluster'] != 'Non-Significant']
+
+    # 7. 设置颜色
+    color_map = {
+        'High-High (Hotspot)': 'red',  # 正红色
+        'Low-Low (Coldspot)': 'purple',  # 紫色
+        'High-Low': 'orange',  # 亮橙色
+        'Low-High': 'lightblue',  # 淡蓝色
+    }
+
+    # 8. 可视化结果
+    fig, ax = plt.subplots(figsize=(10, 8))
+    gdf_merged_2022.plot(ax=ax, edgecolor='black', color=gdf_merged_2022['cluster'].map(color_map))
+
+    # 添加图例
+    legend_labels = list(color_map.keys())
+    legend_colors = list(color_map.values())
+    handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in legend_colors]
+    ax.legend(handles, legend_labels, title="Cluster Type", loc="best")
+
+    plt.title("Spatial Distribution of Airbnb Listings in London (2022) - Local Moran's I Clusters")
+    plt.show()
+
+    # 输出 Local Moran's I 和 p-value
+    print(gdf_merged_2022[['local_moran', 'local_p_value', 'cluster']].head())
+else:
+    print("合并后的数据为空，请检查数据源。")
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+
+# 尝试指定编码
+try:
+    data_2022 = pd.read_csv('2022聚类.csv', encoding='latin1')
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2022 = pd.read_csv('2022聚类.csv', encoding='gbk')
+
+# 创建 GeoDataFrame
+geometry = [Point(xy) for xy in zip(data_2022['longitude'], data_2022['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2022, geometry=geometry, crs="EPSG:4326")
+
+# 确保坐标系统一致（EPSG:27700）
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 筛选不同类型房源
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+print("Data loaded successfully.")
+
+import os
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+
+# 1. 读取伦敦区域 Shapefile 并设置坐标系
+input_folder = 'LB_shp'
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+merged_gdf = gpd.GeoDataFrame(pd.concat(
+    [gpd.read_file(os.path.join(input_folder, f)) for f in shp_files], ignore_index=True)
+).to_crs(epsg=27700)
+
+# 2. 读取 2022 年 Airbnb 数据
+data_2022 = pd.read_csv('2022聚类.csv', encoding='latin1')
+geometry = [Point(xy) for xy in zip(data_2022['longitude'], data_2022['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2022, geometry=geometry, crs="EPSG:4326")
+
+# 确保坐标系一致
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 3. 裁剪点数据到伦敦区域内
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")
+
+# 筛选不同类型房源
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+# 4. 绘图
+fig, ax = plt.subplots(figsize=(12, 10))
+
+# 绘制背景底图
+merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.5, linewidth=0.8, label="London Boroughs")
+
+# 绘制房源点：减小点大小，增加透明度
+entire_home.plot(ax=ax, markersize=2, color='red', alpha=0.5, label='Entire home/apt')
+private_room.plot(ax=ax, markersize=2, color='blue', alpha=0.5, label='Private room')
+
+# 图表美化
+plt.title("Spatial Distribution of Airbnb Listings by Room Type in London (2022)")
+plt.legend(markerscale=2)  # 放大图例点大小
+plt.show()
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+
+# 尝试不同编码格式读取 CSV 文件
+try:
+    data_2022 = pd.read_csv('2022聚类.csv', encoding='latin1')
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2022 = pd.read_csv('2022聚类.csv', encoding='gbk')
+
+# 创建 GeoDataFrame
+geometry = [Point(xy) for xy in zip(data_2022['longitude'], data_2022['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2022, geometry=geometry, crs="EPSG:4326")
+
+print("CSV 文件成功读取！")
+
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import numpy as np
+from shapely.geometry import Point
+from scipy.stats import gaussian_kde
+import os
+
+# 1. 读取并合并 LB_shp 区域数据
+input_folder = 'LB_shp'  # Shapefile 文件夹路径
+output_folder = 'mergeLSOA'
+
+# 确保输出文件夹存在
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+# 合并 Shapefile 文件
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+gdf_list = [gpd.read_file(os.path.join(input_folder, shp_file)) for shp_file in shp_files]
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True)).to_crs(epsg=27700)  # 转换 CRS
+
+# 保存合并后的 shapefile
+output_path = os.path.join(output_folder, 'merged_output.shp')
+merged_gdf.to_file(output_path)
+print(f'Merged shapefile has been saved to {output_path}')
+
+# 2. 读取 Airbnb 数据，处理编码问题并清洗数据
+try:
+    data_2022 = pd.read_csv('2022聚类.csv', encoding='latin1')  # 使用 latin1 尝试读取
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2022 = pd.read_csv('2022聚类.csv', encoding='gbk')
+
+# 清理空值和无效坐标
+data_2022 = data_2022.dropna(subset=['longitude', 'latitude'])
+geometry = [Point(xy) for xy in zip(data_2022['longitude'], data_2022['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2022, geometry=geometry, crs="EPSG:4326")
+
+# 转换坐标系为 EPSG:27700，并裁剪到伦敦区域内
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")  # 裁剪数据
+
+# 筛选房源类型
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+# 3. 定义密度计算和绘图函数
+def calculate_density_with_background(gdf_points, room_type_name, merged_gdf):
+    x = gdf_points.geometry.x
+    y = gdf_points.geometry.y
+    xy = np.vstack([x, y])
+    kde = gaussian_kde(xy)
+
+    # 绘制密度图和行政区背景图
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.set_title(f"Density of {room_type_name} Listings in London (2022)")  # 修改年份为 2022
+    
+    # 绘制背景地图 (行政区)
+    merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.7, label='Boroughs')
+
+    # 绘制房源核密度
+    sc = ax.scatter(x, y, c=kde(xy), s=5, cmap="Reds", alpha=0.8, label=room_type_name)  # 调小点大小
+    plt.colorbar(sc, ax=ax, label='Density')
+
+    plt.legend()
+    plt.show()
+
+# 4. 计算密度并绘制与行政区背景结合的核密度图
+calculate_density_with_background(entire_home, "Entire home/apt", merged_gdf)
+calculate_density_with_background(private_room, "Private room", merged_gdf)
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import numpy as np
+from shapely.geometry import Point
+from scipy.stats import gaussian_kde
+import os
+
+# 1. 读取并合并 LB_shp 区域数据
+input_folder = 'LB_shp'  # Shapefile 文件夹路径
+output_folder = 'mergeLSOA'
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+gdf_list = [gpd.read_file(os.path.join(input_folder, shp_file)) for shp_file in shp_files]
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True)).to_crs(epsg=27700)  # 转换 CRS
+
+# 2. 读取 2022 年 Airbnb 数据，处理编码问题并清洗数据
+try:
+    data_2022 = pd.read_csv('2022聚类.csv', encoding='latin1')  # 使用 latin1 尝试读取
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2022 = pd.read_csv('2022聚类.csv', encoding='gbk')
+
+data_2022['longitude'] = pd.to_numeric(data_2022['longitude'], errors='coerce')
+data_2022['latitude'] = pd.to_numeric(data_2022['latitude'], errors='coerce')
+data_2022 = data_2022.dropna(subset=['longitude', 'latitude'])
+
+geometry = [Point(xy) for xy in zip(data_2022['longitude'], data_2022['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2022, geometry=geometry, crs="EPSG:4326")
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")  # 裁剪数据
+
+# 3. 分类房东类型
+host_counts = gdf_airbnb.groupby('host_id').size()
+gdf_airbnb['host_type'] = gdf_airbnb['host_id'].map(lambda x: 'Single Listing' if host_counts[x] == 1 else 'Multiple Listings')
+
+# 4. 筛选单一房源和多房源
+single_listing = gdf_airbnb[gdf_airbnb['host_type'] == 'Single Listing']
+multiple_listings = gdf_airbnb[gdf_airbnb['host_type'] == 'Multiple Listings']
+
+# 5. 定义分布图绘制函数
+def plot_host_distribution(single_listing, multiple_listings, merged_gdf):
+    fig, ax = plt.subplots(figsize=(12, 10))
+    merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.5, linewidth=0.8, label="London Boroughs")
+
+    single_listing.plot(ax=ax, markersize=2, color='green', alpha=0.5, label='Single Listing')
+    multiple_listings.plot(ax=ax, markersize=2, color='purple', alpha=0.5, label='Multiple Listings')
+
+    plt.title("Spatial Distribution of Single vs. Multiple Listings in London (2022)")
+    plt.legend(markerscale=2)  # 放大图例点大小
+    plt.show()
+
+# 6. 绘制分布图
+plot_host_distribution(single_listing, multiple_listings, merged_gdf)
+```
+
+```{python}
+## GIS ANALYSIS FOE 2023
+```
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import geopandas as gpd
+from shapely.geometry import Point
+
+data_2023 = pd.read_csv('2023聚类.csv', encoding='ISO-8859-1')  # 或尝试 'latin1'
+data = pd.concat([data_2023], axis=0)
+
+#SECOND STEP: Five year casualty totals are linked to isoa spatial data in London，visualization
+
+import os
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+input_folder = 'LB_shp'  
+output_folder = 'mergeLSOA'  
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+# Read all.shp files and merge them into one GeoDataFrame
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# Merge all GeoDatafRames
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+fig, ax = plt.subplots(figsize=(10, 10))
+merged_gdf.plot(ax=ax, cmap='viridis', edgecolor='black')
+ax.set_title("Merged Shapefiles from LB_shp Folder")
+plt.show()
+
+output_path = os.path.join(output_folder, 'merged_output.shp')
+merged_gdf.to_file(output_path)
+
+print(f'Merged shapefile has been saved to {output_path}')
+
+# View the property sheet
+import geopandas as gpd
+import os
+
+folder_path = 'mergeLSOA'  
+shp_files = [f for f in os.listdir(folder_path) if f.endswith('.shp')]
+for shp_file in shp_files:
+    file_path = os.path.join(folder_path, shp_file)
+    
+    gdf = gpd.read_file(file_path)
+    
+    print(f"attribute table: {shp_file}")
+    print(gdf.head())  
+    print("column name: ", gdf.columns)  
+    print("="*40)
+
+# 创建 GeoDataFrame (将 Airbnb 数据中的经纬度转为几何点)
+from shapely.geometry import Point
+
+# 创建一个点集
+geometry = [Point(xy) for xy in zip(data['longitude'], data['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data, geometry=geometry)
+
+# 确保 CRS (坐标参考系统) 与伦敦的Shapefile一致
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)  # EPSG:4326 是 WGS 84 坐标系
+
+# 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+# 假设你的伦敦区域数据 `merged_gdf` 是已经加载的 GeoDataFrame
+
+# 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+gdf_merged = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="intersects")
+
+# 查看合并后的数据
+print(gdf_merged.head())
+
+import geopandas as gpd
+import pandas as pd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+from libpysal import weights
+from esda import Moran_Local
+import os
+
+# STEP 1: 加载 Airbnb 数据 (假设 CSV 文件)
+data_2023 = pd.read_csv('2023聚类.csv', encoding='ISO-8859-1')  # 确保 CSV 文件路径和编码正确
+# 确保经纬度列是有效的数值
+data_2023['longitude'] = pd.to_numeric(data_2023['longitude'], errors='coerce')
+data_2023['latitude'] = pd.to_numeric(data_2023['latitude'], errors='coerce')
+
+# 过滤掉经纬度无效的行
+data_2023_clean = data_2023.dropna(subset=['longitude', 'latitude'])
+
+# STEP 2: 创建 GeoDataFrame，将 Airbnb 数据中的经纬度转为几何点
+geometry = [Point(xy) for xy in zip(data_2023_clean['longitude'], data_2023_clean['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2023_clean, geometry=geometry)
+
+# STEP 3: 转换 CRS (坐标参考系统) 为英国坐标系统 EPSG:27700
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)  # 设置为 WGS84 (EPSG:4326)
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)  # 转换为 EPSG:27700 (英国坐标系统)
+
+# STEP 4: 读取伦敦区域 Shapefile 数据
+input_folder = 'LB_shp'  # 伦敦区域 Shapefile 文件夹路径
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# 合并所有的 GeoDataFrame
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+# STEP 5: 确保 Airbnb 数据和伦敦区域数据的 CRS 一致
+if gdf_airbnb.crs != merged_gdf.crs:
+    merged_gdf = merged_gdf.to_crs(gdf_airbnb.crs)
+
+# STEP 6: 合并 Airbnb 数据和伦敦区域数据（空间连接）
+gdf_merged = gpd.sjoin(gdf_airbnb[['year', 'geometry', 'price']], merged_gdf, how="inner", predicate="intersects")
+
+# STEP 7: 检查合并后的数据是否为空
+if gdf_merged.shape[0] > 0:
+    # 只处理 2023 年的数据
+    gdf_merged_2023 = gdf_merged[gdf_merged['year'] == 2023]
+
+    # 确保价格列 'price' 为数值类型，并清理无效数据
+    gdf_merged_2023['price'] = pd.to_numeric(gdf_merged_2023['price'], errors='coerce')
+    gdf_merged_2023 = gdf_merged_2023.dropna(subset=['price'])
+
+    # STEP 8: 创建空间权重矩阵 (使用 Queen 邻接方式)
+    w = weights.Queen.from_dataframe(gdf_merged_2023, geom_col='geometry', use_index=False)
+    w.transform = 'r'  # 标准化权重矩阵
+
+    # STEP 9: 计算 Local Moran's I
+    moran_local = Moran_Local(gdf_merged_2023['price'], w)
+
+    # 获取 Local Moran's I 值和 p 值
+    gdf_merged_2023['local_moran'] = moran_local.Is
+    gdf_merged_2023['local_p_value'] = moran_local.p_sim
+
+    # 根据 p 值和 q 值标记热点和冷点
+    gdf_merged_2023['cluster'] = 'Non-Significant'  # 默认标记为 'Non-Significant'
+    gdf_merged_2023.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 1), 'cluster'] = 'High-High (Hotspot)'
+    gdf_merged_2023.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 3), 'cluster'] = 'Low-Low (Coldspot)'
+    gdf_merged_2023.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 2), 'cluster'] = 'High-Low'
+    gdf_merged_2023.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 4), 'cluster'] = 'Low-High'
+
+    # STEP 10: 设置颜色映射
+    color_map = {
+        'High-High (Hotspot)': 'red',
+        'Low-Low (Coldspot)': 'purple',
+        'High-Low': 'orange',
+        'Low-High': 'lightblue',
+        'Non-Significant': 'lightgray'
+    }
+
+    # STEP 11: 可视化结果
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    # 绘制合并后的数据，按照聚类类型着色
+    gdf_merged_2023.plot(ax=ax, edgecolor='black', color=gdf_merged_2023['cluster'].map(color_map))
+
+    # 添加图例
+    legend_labels = list(color_map.keys())
+    legend_colors = list(color_map.values())
+    handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in legend_colors]
+    ax.legend(handles, legend_labels, title="Cluster Type", loc="best")
+
+    plt.title("Spatial Distribution of Airbnb Listings in London (2023) - Local Moran's I Clusters")
+    plt.show()
+
+import geopandas as gpd
+import pandas as pd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+from libpysal import weights
+from esda import Moran_Local
+import os
+
+# STEP 1: 加载 Airbnb 数据 (假设 CSV 文件)
+data_2023 = pd.read_csv('2023聚类.csv', encoding='ISO-8859-1')  # 确保 CSV 文件路径和编码正确
+# 确保经纬度列是有效的数值
+data_2023['longitude'] = pd.to_numeric(data_2023['longitude'], errors='coerce')
+data_2023['latitude'] = pd.to_numeric(data_2023['latitude'], errors='coerce')
+
+# 过滤掉经纬度无效的行
+data_2023_clean = data_2023.dropna(subset=['longitude', 'latitude'])
+
+# STEP 2: 创建 GeoDataFrame，将 Airbnb 数据中的经纬度转为几何点
+geometry = [Point(xy) for xy in zip(data_2023_clean['longitude'], data_2023_clean['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2023_clean, geometry=geometry)
+
+# STEP 3: 转换 CRS (坐标参考系统) 为英国坐标系统 EPSG:27700
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)  # 设置为 WGS84 (EPSG:4326)
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)  # 转换为 EPSG:27700 (英国坐标系统)
+
+# STEP 4: 读取伦敦区域 Shapefile 数据
+input_folder = 'LB_shp'  # 伦敦区域 Shapefile 文件夹路径
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# 合并所有的 GeoDataFrame
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+# STEP 5: 确保 Airbnb 数据和伦敦区域数据的 CRS 一致
+if gdf_airbnb.crs != merged_gdf.crs:
+    merged_gdf = merged_gdf.to_crs(gdf_airbnb.crs)
+
+# STEP 6: 合并 Airbnb 数据和伦敦区域数据（空间连接）
+gdf_merged = gpd.sjoin(gdf_airbnb[['year', 'geometry', 'price']], merged_gdf, how="inner", predicate="intersects")
+
+# STEP 7: 检查合并后的数据是否为空
+if gdf_merged.shape[0] > 0:
+    # 只处理 2023 年的数据
+    gdf_merged_2023 = gdf_merged[gdf_merged['year'] == 2023]
+
+    # 确保价格列 'price' 为数值类型，并清理无效数据
+    gdf_merged_2023['price'] = pd.to_numeric(gdf_merged_2023['price'], errors='coerce')
+    gdf_merged_2023 = gdf_merged_2023.dropna(subset=['price'])
+
+    # STEP 8: 创建空间权重矩阵 (使用 Queen 邻接方式)
+    w = weights.Queen.from_dataframe(gdf_merged_2023, geom_col='geometry', use_index=False)
+    w.transform = 'r'  # 标准化权重矩阵
+
+    # STEP 9: 计算 Local Moran's I
+    moran_local = Moran_Local(gdf_merged_2023['price'], w)
+
+    # 获取 Local Moran's I 值和 p 值
+    gdf_merged_2023['local_moran'] = moran_local.Is
+    gdf_merged_2023['local_p_value'] = moran_local.p_sim
+
+    # 根据 p 值和 q 值标记热点和冷点
+    gdf_merged_2023['cluster'] = 'Non-Significant'  # 默认标记为 'Non-Significant'
+    gdf_merged_2023.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 1), 'cluster'] = 'High-High (Hotspot)'
+    gdf_merged_2023.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 3), 'cluster'] = 'Low-Low (Coldspot)'
+    gdf_merged_2023.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 2), 'cluster'] = 'High-Low'
+    gdf_merged_2023.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 4), 'cluster'] = 'Low-High'
+
+    # 移除 'Non-Significant' 的行
+    gdf_merged_2023 = gdf_merged_2023[gdf_merged_2023['cluster'] != 'Non-Significant']
+
+    # STEP 10: 设置颜色映射
+    color_map = {
+        'High-High (Hotspot)': 'red',
+        'Low-Low (Coldspot)': 'purple',
+        'High-Low': 'orange',
+        'Low-High': 'lightblue'
+    }
+
+    # STEP 11: 可视化结果
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    # 绘制合并后的数据，按照聚类类型着色
+    gdf_merged_2023.plot(ax=ax, edgecolor='black', color=gdf_merged_2023['cluster'].map(color_map))
+
+    # 添加图例
+    legend_labels = list(color_map.keys())
+    legend_colors = list(color_map.values())
+    handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in legend_colors]
+    ax.legend(handles, legend_labels, title="Cluster Type", loc="best")
+
+    plt.title("Spatial Distribution of Airbnb Listings in London (2023) - Local Moran's I Clusters")
+    plt.show()
+
+    # 输出 Local Moran's I 和 p-value
+    print(gdf_merged_2023[['local_moran', 'local_p_value', 'cluster']].head())
+else:
+    print("合并后的数据为空，请检查数据源。")
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+
+# 尝试指定编码
+try:
+    data_2023 = pd.read_csv('2023聚类.csv', encoding='latin1')
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2023 = pd.read_csv('2023聚类.csv', encoding='gbk')
+
+# 创建 GeoDataFrame
+geometry = [Point(xy) for xy in zip(data_2023['longitude'], data_2023['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2023, geometry=geometry, crs="EPSG:4326")
+
+# 确保坐标系统一致（EPSG:27700）
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 筛选不同类型房源
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+print("Data loaded successfully.")
+import os
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+
+# 1. 读取伦敦区域 Shapefile 并设置坐标系
+input_folder = 'LB_shp'
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+merged_gdf = gpd.GeoDataFrame(pd.concat(
+    [gpd.read_file(os.path.join(input_folder, f)) for f in shp_files], ignore_index=True)
+).to_crs(epsg=27700)
+
+# 2. 读取 2023 年 Airbnb 数据
+data_2023 = pd.read_csv('2023聚类.csv', encoding='latin1')
+geometry = [Point(xy) for xy in zip(data_2023['longitude'], data_2023['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2023, geometry=geometry, crs="EPSG:4326")
+
+# 确保坐标系一致
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 3. 裁剪点数据到伦敦区域内
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")
+
+# 筛选不同类型房源
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+# 4. 绘图
+fig, ax = plt.subplots(figsize=(12, 10))
+
+# 绘制背景底图
+merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.5, linewidth=0.8, label="London Boroughs")
+
+# 绘制房源点：减小点大小，增加透明度
+entire_home.plot(ax=ax, markersize=2, color='red', alpha=0.5, label='Entire home/apt')
+private_room.plot(ax=ax, markersize=2, color='blue', alpha=0.5, label='Private room')
+
+# 图表美化
+plt.title("Spatial Distribution of Airbnb Listings by Room Type in London (2023)")
+plt.legend(markerscale=2)  # 放大图例点大小
+plt.show()
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+
+# 尝试不同编码格式读取 CSV 文件
+try:
+    data_2023 = pd.read_csv('2023聚类.csv', encoding='latin1')
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2023 = pd.read_csv('2023聚类.csv', encoding='gbk')
+
+# 创建 GeoDataFrame
+geometry = [Point(xy) for xy in zip(data_2023['longitude'], data_2023['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2023, geometry=geometry, crs="EPSG:4326")
+
+print("CSV 文件成功读取！")
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import numpy as np
+from shapely.geometry import Point
+from scipy.stats import gaussian_kde
+import os
+
+# 1. 读取并合并 LB_shp 区域数据
+input_folder = 'LB_shp'  # Shapefile 文件夹路径
+output_folder = 'mergeLSOA'
+
+# 确保输出文件夹存在
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+# 合并 Shapefile 文件
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+gdf_list = [gpd.read_file(os.path.join(input_folder, shp_file)) for shp_file in shp_files]
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True)).to_crs(epsg=27700)  # 转换 CRS
+
+# 保存合并后的 shapefile
+output_path = os.path.join(output_folder, 'merged_output.shp')
+merged_gdf.to_file(output_path)
+print(f'Merged shapefile has been saved to {output_path}')
+
+# 2. 读取 2023 年 Airbnb 数据，处理编码问题并清洗数据
+try:
+    data_2023 = pd.read_csv('2023聚类.csv', encoding='latin1')  # 使用 latin1 尝试读取
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2023 = pd.read_csv('2023聚类.csv', encoding='gbk')
+
+# 清理空值和无效坐标
+data_2023 = data_2023.dropna(subset=['longitude', 'latitude'])
+geometry = [Point(xy) for xy in zip(data_2023['longitude'], data_2023['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2023, geometry=geometry, crs="EPSG:4326")
+
+# 转换坐标系为 EPSG:27700，并裁剪到伦敦区域内
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")  # 裁剪数据
+
+# 筛选房源类型
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+# 3. 定义密度计算和绘图函数
+def calculate_density_with_background(gdf_points, room_type_name, merged_gdf):
+    x = gdf_points.geometry.x
+    y = gdf_points.geometry.y
+    xy = np.vstack([x, y])
+    kde = gaussian_kde(xy)
+
+    # 绘制密度图和行政区背景图
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.set_title(f"Density of {room_type_name} Listings in London (2023)")  # 修改年份为 2023
+    
+    # 绘制背景地图 (行政区)
+    merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.7, label='Boroughs')
+
+    # 绘制房源核密度
+    sc = ax.scatter(x, y, c=kde(xy), s=5, cmap="Reds", alpha=0.8, label=room_type_name)  # 调小点大小
+    plt.colorbar(sc, ax=ax, label='Density')
+
+    plt.legend()
+    plt.show()
+
+# 4. 计算密度并绘制与行政区背景结合的核密度图
+calculate_density_with_background(entire_home, "Entire home/apt", merged_gdf)
+calculate_density_with_background(private_room, "Private room", merged_gdf)
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import numpy as np
+from shapely.geometry import Point
+from scipy.stats import gaussian_kde
+import os
+
+# 1. 读取并合并 LB_shp 区域数据
+input_folder = 'LB_shp'  # Shapefile 文件夹路径
+output_folder = 'mergeLSOA'
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+gdf_list = [gpd.read_file(os.path.join(input_folder, shp_file)) for shp_file in shp_files]
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True)).to_crs(epsg=27700)  # 转换 CRS
+
+# 2. 读取 2023 年 Airbnb 数据，处理编码问题并清洗数据
+try:
+    data_2023 = pd.read_csv('2023聚类.csv', encoding='latin1')  # 使用 latin1 尝试读取
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2023 = pd.read_csv('2023聚类.csv', encoding='gbk')
+
+data_2023['longitude'] = pd.to_numeric(data_2023['longitude'], errors='coerce')
+data_2023['latitude'] = pd.to_numeric(data_2023['latitude'], errors='coerce')
+data_2023 = data_2023.dropna(subset=['longitude', 'latitude'])
+
+geometry = [Point(xy) for xy in zip(data_2023['longitude'], data_2023['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2023, geometry=geometry, crs="EPSG:4326")
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")  # 裁剪数据
+
+# 3. 分类房东类型
+host_counts = gdf_airbnb.groupby('host_id').size()
+gdf_airbnb['host_type'] = gdf_airbnb['host_id'].map(lambda x: 'Single Listing' if host_counts[x] == 1 else 'Multiple Listings')
+
+# 4. 筛选单一房源和多房源
+single_listing = gdf_airbnb[gdf_airbnb['host_type'] == 'Single Listing']
+multiple_listings = gdf_airbnb[gdf_airbnb['host_type'] == 'Multiple Listings']
+
+# 5. 定义分布图绘制函数
+def plot_host_distribution(single_listing, multiple_listings, merged_gdf):
+    fig, ax = plt.subplots(figsize=(12, 10))
+    merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.5, linewidth=0.8, label="London Boroughs")
+
+    single_listing.plot(ax=ax, markersize=2, color='green', alpha=0.5, label='Single Listing')
+    multiple_listings.plot(ax=ax, markersize=2, color='purple', alpha=0.5, label='Multiple Listings')
+
+    plt.title("Spatial Distribution of Single vs. Multiple Listings in London (2023)")
+    plt.legend(markerscale=2)  # 放大图例点大小
+    plt.show()
+
+# 6. 绘制分布图
+plot_host_distribution(single_listing, multiple_listings, merged_gdf)
+```
+
+```{python}
+## GIS ANALYSIS FOR 2024
+```
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import geopandas as gpd
+from shapely.geometry import Point
+
+data_2024 = pd.read_csv('2024聚类.csv', encoding='ISO-8859-1')  # 或尝试 'latin1'
+data = pd.concat([data_2024], axis=0)
+
+#SECOND STEP: Five year casualty totals are linked to isoa spatial data in London，visualization
+
+import os
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+input_folder = 'LB_shp'  
+output_folder = 'mergeLSOA'  
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+# Read all.shp files and merge them into one GeoDataFrame
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# Merge all GeoDatafRames
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+fig, ax = plt.subplots(figsize=(10, 10))
+merged_gdf.plot(ax=ax, cmap='viridis', edgecolor='black')
+ax.set_title("Merged Shapefiles from LB_shp Folder")
+plt.show()
+
+output_path = os.path.join(output_folder, 'merged_output.shp')
+merged_gdf.to_file(output_path)
+
+print(f'Merged shapefile has been saved to {output_path}')
+
+# View the property sheet
+import geopandas as gpd
+import os
+
+folder_path = 'mergeLSOA'  
+shp_files = [f for f in os.listdir(folder_path) if f.endswith('.shp')]
+for shp_file in shp_files:
+    file_path = os.path.join(folder_path, shp_file)
+    
+    gdf = gpd.read_file(file_path)
+    
+    print(f"attribute table: {shp_file}")
+    print(gdf.head())  
+    print("column name: ", gdf.columns)  
+    print("="*40)
+
+# 检查 longitude 和 latitude 列的数据类型
+print(data['longitude'].dtype)
+print(data['latitude'].dtype)
+
+# 查看是否存在非数值的值
+print(data[data['longitude'].apply(pd.to_numeric, errors='coerce').isna()])
+print(data[data['latitude'].apply(pd.to_numeric, errors='coerce').isna()])
+
+# 如果数据中存在无效的值（如非数值），可以选择删除或填充
+# 删除无效行
+data_clean = data.dropna(subset=['longitude', 'latitude'])
+
+# 或者将无法转换为数值的行填充为一个默认值（如 NaN）
+data['longitude'] = pd.to_numeric(data['longitude'], errors='coerce')
+data['latitude'] = pd.to_numeric(data['latitude'], errors='coerce')
+
+# 再次删除 NaN 行（如果有的话）
+data_clean = data.dropna(subset=['longitude', 'latitude'])
+
+from shapely.geometry import Point
+
+# 创建一个点集
+geometry = [Point(xy) for xy in zip(data_clean['longitude'], data_clean['latitude'])]
+
+# 创建 GeoDataFrame
+gdf_airbnb = gpd.GeoDataFrame(data_clean, geometry=geometry)
+
+# 确保 CRS (坐标参考系统) 与伦敦的 Shapefile 一致
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)
+
+# 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+# 假设你的伦敦区域数据 `merged_gdf` 是已经加载的 GeoDataFrame
+
+# 合并 Airbnb 数据和伦敦区域数据（基于空间关系）
+gdf_merged = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="intersects")
+
+# 查看合并后的数据
+print(gdf_merged.head())
+
+# 检查 `longitude` 和 `latitude` 列中的无效值
+invalid_longitude = data_2024[~data_2024['longitude'].apply(pd.to_numeric, errors='coerce').notna()]
+invalid_latitude = data_2024[~data_2024['latitude'].apply(pd.to_numeric, errors='coerce').notna()]
+
+# 打印无效的经纬度值
+print("无效的 longitude 数据：")
+print(invalid_longitude)
+
+print("无效的 latitude 数据：")
+print(invalid_latitude)
+
+# 删除无效的行（包含无效经纬度的行）
+data_2024_clean = data_2024.dropna(subset=['longitude', 'latitude'])
+
+# 再次检查是否有无效的经纬度
+invalid_longitude_clean = data_2024_clean[~data_2024_clean['longitude'].apply(pd.to_numeric, errors='coerce').notna()]
+invalid_latitude_clean = data_2024_clean[~data_2024_clean['latitude'].apply(pd.to_numeric, errors='coerce').notna()]
+
+print("删除后的无效 longitude 数据：")
+print(invalid_longitude_clean)
+
+print("删除后的无效 latitude 数据：")
+print(invalid_latitude_clean)
+
+# 检查无效的 longitude 和 latitude 数据
+data_2024_clean = data_2024.copy()
+
+# 将 'longitude' 和 'latitude' 列转换为数值，无法转换的值会变成 NaN
+data_2024_clean['longitude'] = pd.to_numeric(data_2024_clean['longitude'], errors='coerce')
+data_2024_clean['latitude'] = pd.to_numeric(data_2024_clean['latitude'], errors='coerce')
+
+# 过滤掉 'longitude' 或 'latitude' 中有 NaN 的行
+data_2024_clean = data_2024_clean.dropna(subset=['longitude', 'latitude'])
+
+# 查看数据中是否还有无效的行
+print("清理后的数据：")
+print(data_2024_clean[['longitude', 'latitude']].head())
+
+from shapely.geometry import Point
+
+# 创建 GeoDataFrame
+geometry = [Point(xy) for xy in zip(data_2024_clean['longitude'], data_2024_clean['latitude'])]
+
+# 创建 GeoDataFrame
+gdf_airbnb = gpd.GeoDataFrame(data_2024_clean, geometry=geometry)
+
+# 确保 CRS (坐标参考系统) 与伦敦的 Shapefile 一致
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)  # 转换为 EPSG:27700 (英国坐标系统)
+
+# 打印查看 GeoDataFrame
+print(gdf_airbnb.head())
+
+from shapely.geometry import Point
+
+# 创建 GeoDataFrame
+geometry = [Point(xy) for xy in zip(data_2024_clean['longitude'], data_2024_clean['latitude'])]
+
+# 创建 GeoDataFrame
+gdf_airbnb = gpd.GeoDataFrame(data_2024_clean, geometry=geometry)
+
+# 确保 CRS (坐标参考系统) 与伦敦的 Shapefile 一致
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)  # 转换为 EPSG:27700 (英国坐标系统)
+
+# 打印查看 GeoDataFrame
+print(gdf_airbnb.head())
+
+import geopandas as gpd
+import pandas as pd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+from libpysal import weights
+from esda import Moran_Local
+import os
+
+# STEP 1: 加载 Airbnb 数据 (假设 CSV 文件)
+data_2024 = pd.read_csv('2024聚类.csv', encoding='ISO-8859-1')  # 确保 CSV 文件路径和编码正确
+# 确保经纬度列是有效的数值
+data_2024['longitude'] = pd.to_numeric(data_2024['longitude'], errors='coerce')
+data_2024['latitude'] = pd.to_numeric(data_2024['latitude'], errors='coerce')
+
+# 过滤掉经纬度无效的行
+data_2024_clean = data_2024.dropna(subset=['longitude', 'latitude'])
+
+# STEP 2: 创建 GeoDataFrame，将 Airbnb 数据中的经纬度转为几何点
+geometry = [Point(xy) for xy in zip(data_2024_clean['longitude'], data_2024_clean['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2024_clean, geometry=geometry)
+
+# STEP 3: 转换 CRS (坐标参考系统) 为英国坐标系统 EPSG:27700
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)  # 设置为 WGS84 (EPSG:4326)
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)  # 转换为 EPSG:27700 (英国坐标系统)
+
+# STEP 4: 读取伦敦区域 Shapefile 数据
+input_folder = 'LB_shp'  # 伦敦区域 Shapefile 文件夹路径
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# 合并所有的 GeoDataFrame
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+# STEP 5: 确保 Airbnb 数据和伦敦区域数据的 CRS 一致
+if gdf_airbnb.crs != merged_gdf.crs:
+    merged_gdf = merged_gdf.to_crs(gdf_airbnb.crs)
+
+# STEP 6: 合并 Airbnb 数据和伦敦区域数据（空间连接）
+gdf_merged = gpd.sjoin(gdf_airbnb[['year', 'geometry', 'price']], merged_gdf, how="inner", predicate="intersects")
+
+# STEP 7: 检查合并后的数据是否为空
+if gdf_merged.shape[0] > 0:
+    # 只处理 2024 年的数据
+    gdf_merged_2024 = gdf_merged[gdf_merged['year'] == 2024]
+
+    # 确保价格列 'price' 为数值类型，并清理无效数据
+    gdf_merged_2024['price'] = pd.to_numeric(gdf_merged_2024['price'], errors='coerce')
+    gdf_merged_2024 = gdf_merged_2024.dropna(subset=['price'])
+
+    # STEP 8: 创建空间权重矩阵 (使用 Queen 邻接方式)
+    w = weights.Queen.from_dataframe(gdf_merged_2024, geom_col='geometry', use_index=False)
+    w.transform = 'r'  # 标准化权重矩阵
+
+    # STEP 9: 计算 Local Moran's I
+    moran_local = Moran_Local(gdf_merged_2024['price'], w)
+
+    # 获取 Local Moran's I 值和 p 值
+    gdf_merged_2024['local_moran'] = moran_local.Is
+    gdf_merged_2024['local_p_value'] = moran_local.p_sim
+
+    # 根据 p 值和 q 值标记热点和冷点
+    gdf_merged_2024['cluster'] = 'Non-Significant'  # 默认标记为 'Non-Significant'
+    gdf_merged_2024.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 1), 'cluster'] = 'High-High (Hotspot)'
+    gdf_merged_2024.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 3), 'cluster'] = 'Low-Low (Coldspot)'
+    gdf_merged_2024.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 2), 'cluster'] = 'High-Low'
+    gdf_merged_2024.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 4), 'cluster'] = 'Low-High'
+
+    # STEP 10: 设置颜色映射
+    color_map = {
+        'High-High (Hotspot)': 'red',
+        'Low-Low (Coldspot)': 'purple',
+        'High-Low': 'orange',
+        'Low-High': 'lightblue',
+        'Non-Significant': 'lightgray'
+    }
+
+    # STEP 11: 可视化结果
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    # 绘制合并后的数据，按照聚类类型着色
+    gdf_merged_2024.plot(ax=ax, edgecolor='black', color=gdf_merged_2024['cluster'].map(color_map))
+
+    # 添加图例
+    legend_labels = list(color_map.keys())
+    legend_colors = list(color_map.values())
+    handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in legend_colors]
+    ax.legend(handles, legend_labels, title="Cluster Type", loc="best")
+
+    plt.title("Spatial Distribution of Airbnb Listings in London (2024) - Local Moran's I Clusters")
+    plt.show()
+
+    # 输出 Local Moran's I 和 p-value
+    print(gdf_merged_2024[['local_moran', 'local_p_value', 'cluster']].head())
+else:
+    print("合并后的数据为空，请检查数据源。")
+
+import geopandas as gpd
+import pandas as pd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+from libpysal import weights
+from esda import Moran_Local
+import os
+
+# STEP 1: 加载 Airbnb 数据 (假设 CSV 文件)
+data_2024 = pd.read_csv('2024聚类.csv', encoding='ISO-8859-1')  # 确保 CSV 文件路径和编码正确
+# 确保经纬度列是有效的数值
+data_2024['longitude'] = pd.to_numeric(data_2024['longitude'], errors='coerce')
+data_2024['latitude'] = pd.to_numeric(data_2024['latitude'], errors='coerce')
+
+# 过滤掉经纬度无效的行
+data_2024_clean = data_2024.dropna(subset=['longitude', 'latitude'])
+
+# STEP 2: 创建 GeoDataFrame，将 Airbnb 数据中的经纬度转为几何点
+geometry = [Point(xy) for xy in zip(data_2024_clean['longitude'], data_2024_clean['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2024_clean, geometry=geometry)
+
+# STEP 3: 转换 CRS (坐标参考系统) 为英国坐标系统 EPSG:27700
+gdf_airbnb.set_crs('EPSG:4326', allow_override=True, inplace=True)  # 设置为 WGS84 (EPSG:4326)
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)  # 转换为 EPSG:27700 (英国坐标系统)
+
+# STEP 4: 读取伦敦区域 Shapefile 数据
+input_folder = 'LB_shp'  # 伦敦区域 Shapefile 文件夹路径
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+
+gdf_list = []
+for shp_file in shp_files:
+    file_path = os.path.join(input_folder, shp_file)
+    gdf = gpd.read_file(file_path)
+    gdf_list.append(gdf)
+
+# 合并所有的 GeoDataFrame
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
+
+# STEP 5: 确保 Airbnb 数据和伦敦区域数据的 CRS 一致
+if gdf_airbnb.crs != merged_gdf.crs:
+    merged_gdf = merged_gdf.to_crs(gdf_airbnb.crs)
+
+# STEP 6: 合并 Airbnb 数据和伦敦区域数据（空间连接）
+gdf_merged = gpd.sjoin(gdf_airbnb[['year', 'geometry', 'price']], merged_gdf, how="inner", predicate="intersects")
+
+# STEP 7: 检查合并后的数据是否为空
+if gdf_merged.shape[0] > 0:
+    # 只处理 2024 年的数据
+    gdf_merged_2024 = gdf_merged[gdf_merged['year'] == 2024]
+
+    # 确保价格列 'price' 为数值类型，并清理无效数据
+    gdf_merged_2024['price'] = pd.to_numeric(gdf_merged_2024['price'], errors='coerce')
+    gdf_merged_2024 = gdf_merged_2024.dropna(subset=['price'])
+
+    # STEP 8: 创建空间权重矩阵 (使用 Queen 邻接方式)
+    w = weights.Queen.from_dataframe(gdf_merged_2024, geom_col='geometry', use_index=False)
+    w.transform = 'r'  # 标准化权重矩阵
+
+    # STEP 9: 计算 Local Moran's I
+    moran_local = Moran_Local(gdf_merged_2024['price'], w)
+
+    # 获取 Local Moran's I 值和 p 值
+    gdf_merged_2024['local_moran'] = moran_local.Is
+    gdf_merged_2024['local_p_value'] = moran_local.p_sim
+
+    # 根据 p 值和 q 值标记热点和冷点
+    gdf_merged_2024['cluster'] = 'Non-Significant'  # 默认标记为 'Non-Significant'
+    gdf_merged_2024.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 1), 'cluster'] = 'High-High (Hotspot)'
+    gdf_merged_2024.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 3), 'cluster'] = 'Low-Low (Coldspot)'
+    gdf_merged_2024.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 2), 'cluster'] = 'High-Low'
+    gdf_merged_2024.loc[(moran_local.p_sim < 0.05) & (moran_local.q == 4), 'cluster'] = 'Low-High'
+
+    # 移除 'Non-Significant' 的行
+    gdf_merged_2024 = gdf_merged_2024[gdf_merged_2024['cluster'] != 'Non-Significant']
+
+    # STEP 10: 设置颜色映射
+    color_map = {
+        'High-High (Hotspot)': 'red',
+        'Low-Low (Coldspot)': 'purple',
+        'High-Low': 'orange',
+        'Low-High': 'lightblue'
+    }
+
+    # STEP 11: 可视化结果
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    # 绘制合并后的数据，按照聚类类型着色
+    gdf_merged_2024.plot(ax=ax, edgecolor='black', color=gdf_merged_2024['cluster'].map(color_map))
+
+    # 添加图例
+    legend_labels = list(color_map.keys())
+    legend_colors = list(color_map.values())
+    handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) for color in legend_colors]
+    ax.legend(handles, legend_labels, title="Cluster Type", loc="best")
+
+    plt.title("Spatial Distribution of Airbnb Listings in London (2024) - Local Moran's I Clusters")
+    plt.show()
+
+    # 输出 Local Moran's I 和 p-value
+    print(gdf_merged_2024[['local_moran', 'local_p_value', 'cluster']].head())
+else:
+    print("合并后的数据为空，请检查数据源。")
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+
+# 尝试指定编码
+try:
+    data_2024 = pd.read_csv('2024聚类.csv', encoding='latin1')
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2024 = pd.read_csv('2024聚类.csv', encoding='gbk')
+
+# 检查并清理 longitude 和 latitude 列
+data_2024['longitude'] = pd.to_numeric(data_2024['longitude'], errors='coerce')
+data_2024['latitude'] = pd.to_numeric(data_2024['latitude'], errors='coerce')
+
+# 删除无效值（NaN）
+data_2024 = data_2024.dropna(subset=['longitude', 'latitude'])
+
+# 创建 GeoDataFrame
+geometry = [Point(xy) for xy in zip(data_2024['longitude'], data_2024['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2024, geometry=geometry, crs="EPSG:4326")
+
+# 确保坐标系统一致（EPSG:27700）
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 筛选不同类型房源
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+print("Data loaded successfully.")
+print(f"Number of valid listings: {len(gdf_airbnb)}")
+
+import os
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+
+# 1. 读取伦敦区域 Shapefile 并设置坐标系
+input_folder = 'LB_shp'
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+merged_gdf = gpd.GeoDataFrame(pd.concat(
+    [gpd.read_file(os.path.join(input_folder, f)) for f in shp_files], ignore_index=True)
+).to_crs(epsg=27700)
+
+# 2. 读取 2024 年 Airbnb 数据并清洗坐标列
+try:
+    data_2024 = pd.read_csv('2024聚类.csv', encoding='latin1')
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2024 = pd.read_csv('2024聚类.csv', encoding='gbk')
+
+# 强制转换 longitude 和 latitude 列为数值类型，无法转换的值设置为 NaN
+data_2024['longitude'] = pd.to_numeric(data_2024['longitude'], errors='coerce')
+data_2024['latitude'] = pd.to_numeric(data_2024['latitude'], errors='coerce')
+
+# 删除包含无效坐标的行
+invalid_rows = data_2024[data_2024['longitude'].isna() | data_2024['latitude'].isna()]
+print(f"Removed {len(invalid_rows)} rows with invalid coordinates.")
+data_2024 = data_2024.dropna(subset=['longitude', 'latitude'])
+
+# 3. 创建 GeoDataFrame
+geometry = [Point(xy) for xy in zip(data_2024['longitude'], data_2024['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2024, geometry=geometry, crs="EPSG:4326")
+
+# 确保坐标系一致
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+
+# 4. 裁剪点数据到伦敦区域内
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")
+
+# 筛选不同类型房源
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+# 5. 绘图
+fig, ax = plt.subplots(figsize=(12, 10))
+
+# 绘制背景底图
+merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.5, linewidth=0.8, label="London Boroughs")
+
+# 绘制房源点：减小点大小，增加透明度
+entire_home.plot(ax=ax, markersize=2, color='red', alpha=0.5, label='Entire home/apt')
+private_room.plot(ax=ax, markersize=2, color='blue', alpha=0.5, label='Private room')
+
+# 图表美化
+plt.title("Spatial Distribution of Airbnb Listings by Room Type in London (2024)")
+plt.legend(markerscale=2)  # 放大图例点大小
+plt.show()
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+
+# 尝试不同编码格式读取 CSV 文件
+try:
+    data_2024 = pd.read_csv('2024聚类.csv', encoding='latin1')
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2024 = pd.read_csv('2024聚类.csv', encoding='gbk')
+
+# 清理数据：强制转换 longitude 和 latitude 为数值，无法转换的设为 NaN
+data_2024['longitude'] = pd.to_numeric(data_2024['longitude'], errors='coerce')
+data_2024['latitude'] = pd.to_numeric(data_2024['latitude'], errors='coerce')
+
+# 检查无效值的数量
+invalid_rows = data_2024[data_2024['longitude'].isna() | data_2024['latitude'].isna()]
+print(f"Removed {len(invalid_rows)} rows with invalid coordinates.")
+
+# 删除无效的坐标行
+data_2024 = data_2024.dropna(subset=['longitude', 'latitude'])
+
+# 创建 GeoDataFrame
+geometry = [Point(xy) for xy in zip(data_2024['longitude'], data_2024['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2024, geometry=geometry, crs="EPSG:4326")
+
+print("CSV 文件成功读取并清理！")
+print(gdf_airbnb.head())  # 显示前几行数据
+
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import numpy as np
+from shapely.geometry import Point
+from scipy.stats import gaussian_kde
+import os
+
+# 1. 读取并合并 LB_shp 区域数据
+input_folder = 'LB_shp'  # Shapefile 文件夹路径
+output_folder = 'mergeLSOA'
+
+# 确保输出文件夹存在
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+# 合并 Shapefile 文件
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+gdf_list = [gpd.read_file(os.path.join(input_folder, shp_file)) for shp_file in shp_files]
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True)).to_crs(epsg=27700)  # 转换 CRS
+
+# 保存合并后的 shapefile
+output_path = os.path.join(output_folder, 'merged_output.shp')
+merged_gdf.to_file(output_path)
+print(f'Merged shapefile has been saved to {output_path}')
+
+# 2. 读取 2024 年 Airbnb 数据，处理编码问题并清洗数据
+try:
+    data_2024 = pd.read_csv('2024聚类.csv', encoding='latin1')  # 使用 latin1 尝试读取
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2024 = pd.read_csv('2024聚类.csv', encoding='gbk')
+
+# 清理空值和无效坐标
+data_2024['longitude'] = pd.to_numeric(data_2024['longitude'], errors='coerce')
+data_2024['latitude'] = pd.to_numeric(data_2024['latitude'], errors='coerce')
+data_2024 = data_2024.dropna(subset=['longitude', 'latitude'])
+
+geometry = [Point(xy) for xy in zip(data_2024['longitude'], data_2024['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2024, geometry=geometry, crs="EPSG:4326")
+
+# 转换坐标系为 EPSG:27700，并裁剪到伦敦区域内
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")  # 裁剪数据
+
+# 筛选房源类型
+entire_home = gdf_airbnb[gdf_airbnb['room_type'] == 'Entire home/apt']
+private_room = gdf_airbnb[gdf_airbnb['room_type'] == 'Private room']
+
+# 3. 定义密度计算和绘图函数
+def calculate_density_with_background(gdf_points, room_type_name, merged_gdf):
+    x = gdf_points.geometry.x
+    y = gdf_points.geometry.y
+    xy = np.vstack([x, y])
+    kde = gaussian_kde(xy)
+
+    # 绘制密度图和行政区背景图
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.set_title(f"Density of {room_type_name} Listings in London (2024)")  # 修改年份为 2024
+    
+    # 绘制背景地图 (行政区)
+    merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.7, label='Boroughs')
+
+    # 绘制房源核密度
+    sc = ax.scatter(x, y, c=kde(xy), s=5, cmap="Reds", alpha=0.8, label=room_type_name)  # 调小点大小
+    plt.colorbar(sc, ax=ax, label='Density')
+
+    plt.legend()
+    plt.show()
+
+# 4. 计算密度并绘制与行政区背景结合的核密度图
+calculate_density_with_background(entire_home, "Entire home/apt", merged_gdf)
+calculate_density_with_background(private_room, "Private room", merged_gdf)
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import numpy as np
+from shapely.geometry import Point
+from scipy.stats import gaussian_kde
+import os
+
+# 1. 读取并合并 LB_shp 区域数据
+input_folder = 'LB_shp'  # Shapefile 文件夹路径
+output_folder = 'mergeLSOA'
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+shp_files = [f for f in os.listdir(input_folder) if f.endswith('.shp')]
+gdf_list = [gpd.read_file(os.path.join(input_folder, shp_file)) for shp_file in shp_files]
+merged_gdf = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True)).to_crs(epsg=27700)  # 转换 CRS
+
+# 2. 读取 2024 年 Airbnb 数据，处理编码问题并清洗数据
+try:
+    data_2024 = pd.read_csv('2024聚类.csv', encoding='latin1')
+except UnicodeDecodeError:
+    print("Trying GBK encoding...")
+    data_2024 = pd.read_csv('2024聚类.csv', encoding='gbk')
+
+data_2024['longitude'] = pd.to_numeric(data_2024['longitude'], errors='coerce')
+data_2024['latitude'] = pd.to_numeric(data_2024['latitude'], errors='coerce')
+data_2024 = data_2024.dropna(subset=['longitude', 'latitude'])
+
+geometry = [Point(xy) for xy in zip(data_2024['longitude'], data_2024['latitude'])]
+gdf_airbnb = gpd.GeoDataFrame(data_2024, geometry=geometry, crs="EPSG:4326")
+gdf_airbnb = gdf_airbnb.to_crs(epsg=27700)
+gdf_airbnb = gpd.sjoin(gdf_airbnb, merged_gdf, how="inner", predicate="within")  # 裁剪数据
+
+# 3. 分类房东类型
+host_counts = gdf_airbnb.groupby('host_id').size()
+gdf_airbnb['host_type'] = gdf_airbnb['host_id'].map(lambda x: 'Single Listing' if host_counts[x] == 1 else 'Multiple Listings')
+
+# 4. 筛选单一房源和多房源
+single_listing = gdf_airbnb[gdf_airbnb['host_type'] == 'Single Listing']
+multiple_listings = gdf_airbnb[gdf_airbnb['host_type'] == 'Multiple Listings']
+
+# 5. 定义分布图绘制函数
+def plot_host_distribution(single_listing, multiple_listings, merged_gdf):
+    fig, ax = plt.subplots(figsize=(12, 10))
+    merged_gdf.plot(ax=ax, color='lightgrey', edgecolor='black', alpha=0.5, linewidth=0.8, label="London Boroughs")
+
+    single_listing.plot(ax=ax, markersize=2, color='green', alpha=0.5, label='Single Listing')
+    multiple_listings.plot(ax=ax, markersize=2, color='purple', alpha=0.5, label='Multiple Listings')
+
+    plt.title("Spatial Distribution of Single vs. Multiple Listings in London (2024)")
+    plt.legend(markerscale=2)  # 放大图例点大小
+    plt.show()
+
+# 6. 绘制分布图
+plot_host_distribution(single_listing, multiple_listings, merged_gdf)
+```
+
+```{python}
+## load Spatial Distribution of Airbnb Listings in London (2019-2024) - Local Moran's I Clusters including non-significant( connected the 6 year through photoshop）（ figure 5 )
+```
+
+```{python}
+from PIL import Image
+import matplotlib.pyplot as plt
+
+# 打开 JPG 文件
+image = Image.open("Spatial Distribution of Airbnb Listings in London (2019-2024) - Local Moran's I Clusters including non-significant.jpg")
+
+# 设置显示图片的大小
+plt.figure(figsize=(20, 14))  # 设置宽度和高度，单位为英寸
+
+# 显示图片
+plt.imshow(image)
+plt.axis('off')  # 隐藏坐标轴
+plt.show()
+```
+
+```{python}
+## **Figure 5** : Before COVID-19 (2019), London's Airbnb market thrived with dense central clusters. During COVID-19 (2020-2021), listings declined, hotspots dispersed, and uncertainty increased. Post-COVID-19 (2022-2024), the market recovered gradually but remained uneven, with some hosts exiting and listings more spatially dispersed.
+```
+
+```{python}
+## load Spatial Distribution of Airbnb Listings in London (2019-2024) - Local Moran's I Clusters only significant( connected the 6 year through photoshop）（ figure 6 )
+```
+
+```{python}
+from PIL import Image
+import matplotlib.pyplot as plt
+
+# 打开 JPG 文件
+image = Image.open("Spatial Distribution of Airbnb Listings in London (2019-2024) - Local Moran's I Clusters only significant.jpg")
+
+# 设置显示图片的大小
+plt.figure(figsize=(20, 14))  # 设置宽度和高度，单位为英寸
+
+# 显示图片
+plt.imshow(image)
+plt.axis('off')  # 隐藏坐标轴
+plt.show()
+```
+
+```{python}
+## **Figure 6** : Before COVID-19 (2019), London’s Airbnb market was concentrated and thriving with clear hotspots. During COVID-19 (2020-2021), listings decreased and dispersed, reflecting market uncertainty. Post-COVID-19 (2022-2024), the market gradually recovered but remained smaller and more scattered, with some properties exiting permanently.
+```
+
+```{python}
+## load Spatial Distribution of Airbnb Listings by Room Type in London（2019-2024）( connected the 6 year through photoshop）（ figure 7 )
+```
+
+```{python}
+from PIL import Image
+import matplotlib.pyplot as plt
+
+# 打开 JPG 文件
+image = Image.open("Spatial Distribution of Airbnb Listings by Room Type in London（2019-2024）.jpg")
+
+# 设置显示图片的大小
+plt.figure(figsize=(20, 14))  # 设置宽度和高度，单位为英寸
+
+# 显示图片
+plt.imshow(image)
+plt.axis('off')  # 隐藏坐标轴
+plt.show()
+```
+
+```{python}
+## **Figure 7** : Before COVID-19 (2019), Airbnb activity was concentrated in central London with dense listings. During COVID-19 (2020-2021), listings declined, dispersed, and market uncertainty grew. Post-COVID-19 (2022-2024), the market gradually recovered, but central density remained lower, listings more dispersed, and some properties likely shifted to long-term rentals.
+```
+
+```{python}
+## load Figure 8: Density of Entire home or apt Listings in London(2019-2024)( connected the 6 year through photoshop）
+```
+
+```{python}
+from PIL import Image
+import matplotlib.pyplot as plt
+
+# 打开 JPG 文件
+image = Image.open("Density of Entire home or apt Listings in London(2019-2024).jpg")
+
+# 设置显示图片的大小
+plt.figure(figsize=(20, 14))  # 设置宽度和高度，单位为英寸
+
+# 显示图片
+plt.imshow(image)
+plt.axis('off')  # 隐藏坐标轴
+plt.show()
+```
+
+```{python}
+## **Figure 8** : Before COVID-19 (2019), entire home listings were dense, especially in central London. During COVID-19 (2020-2021), density declined as listings dropped, reflecting market disruptions. Post-COVID-19 (2022-2024), density gradually recovered but remained below pre-pandemic levels, with listings more dispersed and structural adjustments evident.
+```
+
+```{python}
+## load Figure 9: Density of Private room Listings in London(2019-2024)( connected the 6 year through photoshop）
+```
+
+```{python}
+from PIL import Image
+import matplotlib.pyplot as plt
+
+# 打开 JPG 文件
+image = Image.open("Density of Private room Listings in London(2019-2024).jpg")
+
+# 设置显示图片的大小
+plt.figure(figsize=(20, 14))  # 设置宽度和高度，单位为英寸
+
+# 显示图片
+plt.imshow(image)
+plt.axis('off')  # 隐藏坐标轴
+plt.show()
+```
+
+```{python}
+## **Figure 9** : Before COVID-19 (2019), private room listings were dense in central London, showing market prosperity. During COVID-19 (2020-2021), density declined, listings reduced, and the market slowed. Post-COVID-19 (2022-2024), listings gradually recovered but became more dispersed, failing to reach pre-pandemic levels, with structural adjustments and lasting impacts.
+```
+
+```{python}
+## load Figure 10: Spatial Distribution of Single vs multiple(2019-2024)( connected the 6 year through photoshop）
+```
+
+```{python}
+from PIL import Image
+import matplotlib.pyplot as plt
+
+# 打开 JPG 文件
+image = Image.open("Spatial Distribution of Single vs multiple(2019-2024).jpg")
+
+# 设置显示图片的大小
+plt.figure(figsize=(20, 14))  # 设置宽度和高度，单位为英寸
+
+# 显示图片
+plt.imshow(image)
+plt.axis('off')  # 隐藏坐标轴
+plt.show()
+```
+
+```{python}
+## **Figure 10** :Before COVID-19 (2019), single and multiple listings were dense, showing a thriving market. During COVID-19 (2020-2021), listings declined, with multiple listings most affected. Post-COVID-19 (2022-2024), listings recovered gradually but became more dispersed, density remained lower, and some properties exited or shifted to long-term rentals.
+```
+
+## 7. Drawing on your previous answers, and supporting your response with evidence (*e.g.* figures, maps, EDA/ESDA, and simple statistical analysis/models drawing on experience from, e.g., CASA0007), how *could* the InsideAirbnb data set be used to inform the regulation of Short-Term Lets (STL) in London? 
+
+```{python}
+#short term and long term list
+# Group by year and apply the same conditions
+import pandas as pd
+
+# Load the uploaded file to examine its structure and content
+file_path = 'combined_data2.csv'
+combined_data = pd.read_csv(file_path)
+
+
+count_by_year = combined_data.groupby('year').apply(
+    lambda df: pd.Series({
+        'max_nights_90_or_less': df[df['maximum_nights'] <= 90]['id'].nunique(),
+        'max_nights_above_90': df[df['maximum_nights'] > 90]['id'].nunique()
+    })
+).reset_index()
+
+print(count_by_year)
+```
+
+```{python}
+# Plot the data as a line graph
+plt.figure(figsize=(6, 4))
+
+# Plot lines for each category
+plt.plot(count_by_year['year'], count_by_year['max_nights_90_or_less'], marker='o', label='Max Nights ≤ 90',color = 'green')
+plt.plot(count_by_year['year'], count_by_year['max_nights_above_90'], marker='o', label='Max Nights > 90', color = 'purple')
+
+# Add labels and title
+plt.xlabel('Year')
+plt.ylabel('Number of Listings')
+plt.title('STL and LTL by year')
+plt.xticks(count_by_year['year'])
+plt.legend(frameon=False)
+plt.grid(visible=True, linestyle='--', linewidth=0.5, alpha=0.7)
+
+#Display the plot
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+### 7.1 Short-Term Letting Policy Objectives and Data Matching
+
+According to **4.1 visualization**, to analyze the overall market price and the number of housing units, spatial distribution in London, and to propose corresponding policies and market forecasts in this regard.
+
+#### 7.1.1 Visual Analysis
+
+- **Overall Market Prices and Number of Properties**  
+Figure 1 shows that the average overall market price rises significantly from **2021 onwards**, especially peaking in **2024**. This may reflect a rebound in demand and an imbalance between supply and demand. The number of listings peaks in **2023**, followed by a slight decline in **2024**, possibly due to internal policy interventions within Airbnb (Wang & Hincks, 2024). For example, the closure of operations in mainland China after COVID-19 (Reuters, 2022) indirectly influenced Airbnb's strategy in the London market (Qin et al., 2020).  
+Figure 2 illustrates the increased demand for **detached houses** post-pandemic, which further drove up prices, while the overall number of listings remained relatively stable.
+
+- **Spatial Distribution**  
+Hotspots are steadily concentrated in **core London areas** (e.g., Westminster, Camden, Kensington), where market values and demand for listings remain high (Savills, 2011). From **2019 to 2024**, hotspots show a slight tendency to expand, integrating fringe areas.  
+Coldspots remain predominantly in suburban areas but show a gradual **narrowing scope**, suggesting market penetration. The **Hotspot-Coldspot** fringe effect is significant year-on-year. Spillover effects drive up market activity in adjacent areas (Marsden, 2015), especially between **2023 and 2024**.
+
+#### 7.1.2 Market Forecast
+
+Charts from **2019 to 2024** indicate:
+- Core hotspots will remain dominant (Savills, 2011).  
+- Investors can focus on **expanding periphery hotspots** and areas near the Hotspot-Coldspot fringe.  
+- Coldspots are shrinking, presenting peripheral opportunities for potential investments (Marsden, 2015).
+
+---
+```
+
+```{python}
+### 7.2 Recommendations for Policy Adjustments During and After COVID-19
+
+The COVID-19 pandemic significantly impacted the short-term rental market. Based on spatial autocorrelation and hotspot/coldspot analyses, several **policy recommendations** are proposed:
+
+1. **Monitoring Spatial Distribution**  
+   Policymakers must monitor the **spatial distribution of Airbnb listings** and their effects on long-term housing markets. In expensive areas where Airbnb listings declined due to reduced tourism, policy support may stabilize regional housing markets (Jang & Kim, 2022).
+
+2. **Addressing Gentrification**  
+   In low-priced areas experiencing rising temporary rentals, regulatory steps are needed to prevent gentrification and maintain **affordable long-term housing** (Guglielminetti et al., 2023).
+
+3. **Balanced Housing Supply**  
+   Regulators can:  
+   - Encourage **Airbnb conversions** into long-term rentals in high-price zones.  
+   - Limit the proportion of short-term rentals in low-price areas (Ding et al., 2023).  
+
+4. **Post-Pandemic Observations**  
+   Policymakers should analyze the **re-entry of Airbnb listings** into the market and their absorption into long-term rentals (Hati et al., 2021).
+
+5. **Socioeconomic Effects**  
+   Shifts from short-term to long-term rentals may influence housing affordability for different social groups (Gerwe, 2021). Recommendations include:  
+   - Housing subsidies for **low-income residents** in high-rent areas.  
+   - **Tax incentives** for landlords converting properties into long-term rentals.
+
+---
+```
+
+```{python}
+### 7.3 Refer to CASA0007 Analysis
+import pandas as pd
+
+# Load the uploaded file
+file_path = 'unemployment_rate.csv'
+unemployment_data = pd.read_csv(file_path)
+file_path = 'combined_data2.csv'
+combined_data = pd.read_csv(file_path)
+
+# Display the structure and a preview of the data
+unemployment_data.head()
+```
+
+```{python}
+# Clean and inspect the data further
+unemployment_data_cleaned = unemployment_data.iloc[5:].rename(
+    columns={
+        'Title': 'Date',
+        'Unemployment rate (aged 16 and over, seasonally adjusted): %': 'Unemployment Rate (%)'
+    }
+)
+
+# Convert the date column to a datetime format and unemployment rate to numeric
+unemployment_data_cleaned['Date'] = pd.to_datetime(unemployment_data_cleaned['Date'], errors='coerce')
+unemployment_data_cleaned['Unemployment Rate (%)'] = pd.to_numeric(
+    unemployment_data_cleaned['Unemployment Rate (%)'], errors='coerce'
+)
+
+# Filter the data for years 2019 to 2024
+unemployment = unemployment_data_cleaned[
+    (unemployment_data_cleaned['Date'].dt.year >= 2019) &
+    (unemployment_data_cleaned['Date'].dt.year <= 2024)
+]
+
+# Display the filtered data
+print(unemployment)
+```
+
+```{python}
+# Calculate the average unemployment rate per year
+average_unemployment_rate = unemployment.groupby(unemployment['Date'].dt.year)['Unemployment Rate (%)'].mean().reset_index()
+average_unemployment_rate.rename(columns={'Date': 'Year', 'Unemployment Rate (%)': 'Average Unemployment Rate (%)'}, inplace=True)
+
+# Display the result
+# Round the average unemployment rate to 3 decimal places
+average_unemployment_rate['Average Unemployment Rate (%)'] = average_unemployment_rate['Average Unemployment Rate (%)'].round(2)
+
+average_unemployment_rate.rename(columns={'Year': 'year'}, inplace=True)
+
+average_per_year = combined_data.groupby('year').agg({
+    'price': 'mean',
+    'host_total_listings_count': 'mean'
+}).reset_index().round(0).astype(int)
+
+availability_non_zero_counts = combined_data.groupby('year').agg({
+    'id': 'nunique',
+    'availability_90': lambda x: (x > 0).sum(),
+    'availability_365': lambda x: (x > 0).sum()
+}).reset_index()
+
+# Rename columns for clarity
+availability_non_zero_counts.rename(columns={
+    'id': 'unique_listing_ids',
+    'availability_90': 'availability_90_non_zero',
+    'availability_365': 'availability_365_non_zero'
+}, inplace=True)
+
+regression1 = pd.merge(average_unemployment_rate, average_per_year, on='year', how='inner')
+
+column_to_merge = availability_non_zero_counts[['year', 'availability_365_non_zero']]
+# Merge the datasets
+regression2 = pd.merge(regression1, column_to_merge, how='left', on='year')
+
+regression2
+```
+
+```{python}
+# Load the latest dataset
+import matplotlib.pyplot as plt
+import seaborn as sns
+# Drop the 'year' column and calculate the correlation matrix
+correlation_matrix = regression2.drop(columns=['year'], errors='ignore').corr()
+
+# Create a correlation heatmap excluding the 'year' column
+plt.figure(figsize=(8, 6))
+sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", fmt=".2f", linewidths=0.5)
+plt.title("Correlation Heatmap of factors")
+plt.show()
+```
+
+```{python}
+# Import libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Load the dataset
+
+# Drop the 'year' column for regression
+X_multi = regression2.drop(columns=['year', 'price'], errors='ignore')
+y = regression2['price']
+
+# Split data into train and test sets
+X_train, X_test, y_train, y_test = train_test_split(X_multi, y, test_size=0.2, random_state=42)
+
+# Train the multilinear regression model
+multi_model = LinearRegression()
+multi_model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred_multi = multi_model.predict(X_test)
+mse_multi = mean_squared_error(y_test, y_pred_multi)
+r2_multi = r2_score(y_test, y_pred_multi)
+
+# Get model coefficients
+coefficients_multi = pd.DataFrame({'Feature': X_multi.columns, 'Coefficient': multi_model.coef_})
+
+mse_multi, r2_multi, coefficients_multi
+
+import statsmodels.api as sm
+
+# Add a constant for statsmodels (intercept term)
+X_multi_sm = sm.add_constant(X_multi)
+
+# Fit the model using statsmodels
+multi_model_sm = sm.OLS(y, X_multi_sm).fit()
+
+# Get the summary, which includes p-values
+multi_model_summary = multi_model_sm.summary()
+multi_model_summary
+```
+
+```{python}
+#### 7.3.1 Data Analysis
+
+- **Correlation Analysis**  
+Figure 4 identifies significant socio-economic correlations:  
+   - **Host Total Listings Count** positively correlates with prices (0.83).  
+   - **Average Unemployment Rate** negatively correlates with prices (-0.53).  
+   - **Days of Availability** has a weak positive correlation with prices (0.51).
+
+- **Regression Analysis**  
+Linear regression results indicate:  
+   - **R-squared** is **0.731**, but the adjusted R-squared drops to **0.328**, suggesting multicollinearity or overfitting issues.  
+   - None of the characteristics (e.g., unemployment rate, host listings count, days of availability) have statistically significant effects on prices (**p > 0.05**).
+
+- **Key Coefficients**:  
+   - Unemployment rate: **-9.9172** (slightly reduces prices).  
+   - Host total listings: **1.0625** (positive relationship but unstable).  
+   - Days of availability: **0.0007** (negligible effect on prices).
+
+---
+```
+
+```{python}
+#### 7.3.2 Limitations
+
+- **Small Sample Size**: Only 6 samples, causing unreliable estimates.  
+- **Multicollinearity**: High correlation (0.83) between variables affects model stability.  
+- **Lack of Data Diversity**: Missing factors like location, housing type, and accessibility.  
+- **Heteroskedasticity**: Not tested, potentially affecting robustness.
+
+---
+
+#### 7.3.3 Regulatory Recommendations for London
+
+1. **Market Competition**  
+   Limit the **number of listings per host** to reduce monopolies and stabilize prices (Marsden, 2015).
+
+2. **Investment in Housing Security**  
+   Attract investments in housing through infrastructure and policy incentives in high-unemployment areas (Savills, 2011).
+
+3. **Day Limits for STL**  
+   Regulate short-term rentals by limiting the **number of days available**, ensuring a stable long-term housing supply.
+
+4. **Improved Data Collection**  
+   Increase sample size and include additional variables like **location** and **housing characteristics** to improve price prediction models.
+
+---
+```
+
+```{python}
+## Sustainable Authorship Tools
+
+Using the Terminal in Docker, you compile the Quarto report using `quarto render <group_submission_file>.qmd`.
+
+Your QMD file should automatically download your BibTeX and CLS files and any other required files. If this is done right after library loading then the entire report should output successfully.
+
+Written in Markdown and generated from [Quarto](https://quarto.org/). Fonts used: [Spectral](https://fonts.google.com/specimen/Spectral) (mainfont), [Roboto](https://fonts.google.com/specimen/Roboto) (<span style="font-family:Sans-Serif;">sansfont</span>) and [JetBrains Mono](https://fonts.google.com/specimen/JetBrains%20Mono) (`monofont`). 
+```
+
+```{python}
+## References
+
+- **Alsudais, A. (2021)**. Incorrect data in the widely used Inside Airbnb dataset. *Decision Support Systems*, 141, p.113453.  
+  doi: [https://doi.org/10.1016/j.dss.2020.113453](https://doi.org/10.1016/j.dss.2020.113453).
+
+- **Aspinall, E. (2022)**. COVID-19 Timeline. [online] British Foreign Policy Group.  
+  Available at: [https://bfpg.co.uk/2020/04/covid-19-timeline/](https://bfpg.co.uk/2020/04/covid-19-timeline/).
+
+- **Buckbee, M. (2023)**. Data Privacy Guide: Definitions, Explanations and Legislation. [online] Varonis.  
+  Available at: [https://www.varonis.com/blog/data-privacy](https://www.varonis.com/blog/data-privacy).
+
+- **Croft, K. (2024)**. The Library: Research Skills: Research Ethics. [online] Leeds Beckett University.  
+  Available at: [https://libguides.leedsbeckett.ac.uk/skills-for-learning/research-skills/research-ethics](https://libguides.leedsbeckett.ac.uk/skills-for-learning/research-skills/research-ethics).
+
+- **Ding, K., Niu, Y. and Choo, W.C. (2023)**. The evolution of Airbnb research: A systematic literature review using structural topic modeling. *Heliyon*, 9(6), pp.e17090–e17090.  
+  doi: [https://doi.org/10.1016/j.heliyon.2023.e17090](https://doi.org/10.1016/j.heliyon.2023.e17090).
+
+- **Gerwe, O. (2021)**. The Covid-19 pandemic and the accommodation sharing sector: Effects and prospects for recovery. *Technological Forecasting and Social Change*, 167, p.120733.  
+  doi: [https://doi.org/10.1016/j.techfore.2021.120733](https://doi.org/10.1016/j.techfore.2021.120733).
+
+- **Greater London Authority (2024)**. Guidance on short term and holiday lets in London. [online] London City Hall.  
+  Available at: [https://www.london.gov.uk/programmes-strategies/housing-and-land/improving-private-rented-sector/guidance-short-term-and-holiday-lets-london](https://www.london.gov.uk/programmes-strategies/housing-and-land/improving-private-rented-sector/guidance-short-term-and-holiday-lets-london).
+
+- **Guglielminetti, E., Loberto, M. and Mistretta, A. (2023)**. The impact of COVID-19 on the European short-term rental market. *Empirica*, Advance online publication (pp.1-39).  
+  doi: [https://doi.org/10.1007/s10663-023-09576-x](https://doi.org/10.1007/s10663-023-09576-x).
+
+- **Hati, S.R.H., Balqiah, T.E., Hananto, A. and Yuliati, E. (2021)**. A Decade of Systematic Literature Review on Airbnb: the Sharing Economy from a Multiple Stakeholder Perspective. *Heliyon*, 7(10).  
+  doi: [https://doi.org/10.1016/j.heliyon.2021.e08222](https://doi.org/10.1016/j.heliyon.2021.e08222).
+
+- **Inside Airbnb (2015)**. Data Assumptions. [online] Inside Airbnb.  
+  Available at: [https://insideairbnb.com/data-assumptions/](https://insideairbnb.com/data-assumptions/).
+
+- **Jang, S. and Kim, J. (2022)**. Remedying Airbnb COVID-19 disruption through tourism clusters and community resilience. *Journal of Business Research*, 139, pp.529–542.  
+  doi: [https://doi.org/10.1016/j.jbusres.2021.10.015](https://doi.org/10.1016/j.jbusres.2021.10.015).
+
+- **Marsden, J. (2015)**. House prices in London – an economic analysis of London’s housing market. [online] London City Hall.  
+  Available at: [https://www.london.gov.uk/sites/default/files/house-prices-in-london.pdf](https://www.london.gov.uk/sites/default/files/house-prices-in-london.pdf).
+
+- **Office of Research Integrity (2003)**. Data Collection. [online] U.S. Department of Health and Human Services.  
+  Available at: [https://ori.hhs.gov/education/products/n_illinois_u/datamanagement/dctopic.html](https://ori.hhs.gov/education/products/n_illinois_u/datamanagement/dctopic.html).
+
+- **Peña, R. (2023)**. Reviewing Inside Airbnb: Is it Worth it? Features, Pricing, and Reviews. [online] Airbtics | Airbnb Analytics.  
+  Available at: [https://airbtics.com/inside-airbnb-data/](https://airbtics.com/inside-airbnb-data/).
+
+- **Qin, D., Lin, P.M.C., Feng, S.Y., Peng, K.-L. and Fan, D. (2020)**. The future of Airbnb in China: industry perspective from hospitality leaders. *Tourism Review*, ahead-of-print.  
+  doi: [https://doi.org/10.1108/tr-02-2019-0064](https://doi.org/10.1108/tr-02-2019-0064).
+
+- **Reuters (2022)**. Airbnb to close its domestic business in mainland China. [online] NBC News.  
+  Available at: [https://www.nbcnews.com/news/world/airbnb-close-domestic-business-mainland-china-rcna30231](https://www.nbcnews.com/news/world/airbnb-close-domestic-business-mainland-china-rcna30231).
+
+- **Savills (2011)**. Savills Research Prime Central London Residential Spotlight Six years of volatility A performance review 2005 to 2011. [online] Savills.  
+  Available at: [https://pdf.euro.savills.co.uk/uk/spotlight-on/spotlight-on-prime-central-london-residential-oct-2011.pdf](https://pdf.euro.savills.co.uk/uk/spotlight-on/spotlight-on-prime-central-london-residential-oct-2011.pdf).
+
+- **University of Portsmouth (2024)**. Key features of academic reports. [online] University of Portsmouth.  
+  Available at: [https://myport.port.ac.uk/study-skills/written-assignments/key-features-of-academic-reports](https://myport.port.ac.uk/study-skills/written-assignments/key-features-of-academic-reports).
+
+- **Wang, N. and Hincks, S. (2024)**. Airbnb and the COVID-19 pandemic: A geospatial analysis of Greater London. *Environment and Planning B: Urban Analytics and City Science*.
+```
