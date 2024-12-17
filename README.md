@@ -1,2 +1,2 @@
 # qmd_file
-all required file links in qmd 
+all required file download links are in this repository
